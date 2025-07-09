@@ -40,8 +40,8 @@ class TranslateService(BaseObject):
             "source_language": "英文",  # 源语言
             "target_language": "中文",  # 目标语言
             "audio_type": "电影",
-            "subject_content": "娱乐",
-            "style_language": "激情",
+            "subject_content": "无",
+            "style_language": "正常",
             "llm_api_url": "http://127.0.0.1:11434/v1",  # LLM API 地址
             "llm_api_key": "api.key",  # LLM API 密钥
             "llm_model": "gemma2:latest",  # 使用的模型

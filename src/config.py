@@ -6,7 +6,7 @@ import os
 import sys
 from typing import Dict, Any, List, Optional
 
-VERSION = "v0.0.5"
+VERSION = "v0.0.6"
 APP_TITLE = "AI千言字幕"
 APP_NAME = "AILiteSubtitler"
 APP_LICENSE = "GPLv3"
@@ -34,6 +34,8 @@ TEMP_PATH = os.path.join(APPDATA_PATH, "temp")
 
 SETTING_PATH = os.path.join(ROOT_PATH, "setting.json")
 PROMPT_PATH = os.path.join(RESOURCE_PATH, "prompts")
+
+OUTPUT_PATH = os.path.join(ROOT_PATH, "output")
 
 ICON_REC = {
     "logo": os.path.join(RESOURCE_PATH, "images", "logo.png"),
@@ -76,6 +78,12 @@ DEFAULT_ARGS = {
         "level": logging.INFO,
         "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     },
+    "files": {
+        "directory": {
+            "Input": ROOT_PATH,  # 默认文件选择打开目录
+            "Output": OUTPUT_PATH,  # 默认文件输出目录
+        }
+    },
     "asr_args": {
         "need_asr": True,
         "use_cache": False,
@@ -95,10 +103,10 @@ DEFAULT_ARGS = {
         "source_language": "自动",  # 源语言
         "target_language": "简体中文(Chinese, Simplified)",  # 目标语言
         "audio_type": "电影",  # 音频类型
-        "subject_content": "娱乐",  # 主题领域
-        "style_language": "激情",  # 语言风格
+        "subject_content": "无",  # 主题领域
+        "style_language": "正常",  # 语言风格
         "llm_api_url": "https://api.siliconflow.cn/v1",
-        "llm_api_key": "sk-wlyrgyaimjzndvavtogmqssbjdajdvdkzpqbeiyrqaoeivno",
+        "llm_api_key": "sk-cgglagxdwbqojukfultebwncldhzyopxydrlkprbgavbamvj",
         "llm_model": "THUDM/glm-4-9b-chat",  # "gemma2:latest",  # 模型
         "need_remove_punctuation": True,  # 是否删除句子中的符号
     },
@@ -112,8 +120,8 @@ DEFAULT_ARGS = {
             "Name": "Default",  # Secondary
             "Fontname": "微软雅黑",  # 字体
             "Fontsize": 24,  # 字号
-            "PrimaryColour": "#FFFFFF",  # 字幕主颜色
-            "SecondaryColour": "#FFFFFF",  #
+            "PrimaryColour": "#FFAEC9",  # 字幕主颜色
+            "SecondaryColour": "#FFAEC9",  #
             "OutlineColour": "#000000",  # 字幕边框颜色
             "BackColour": "#000000",  # 字幕背景颜色
             "Bold": -1,  # 加粗, -1 无效，0 不加，1 加粗
@@ -137,8 +145,8 @@ DEFAULT_ARGS = {
             "Name": "Secondary",
             "Fontname": "微软雅黑",  # 字体
             "Fontsize": 24,  # 字号
-            "PrimaryColour": "#bbbbbb",  # 字幕主颜色
-            "SecondaryColour": "#bbbbbb",  #
+            "PrimaryColour": "#aaaaaa",  # 字幕主颜色
+            "SecondaryColour": "#aaaaaa",  #
             "OutlineColour": "#000000",  # 字幕边框颜色
             "BackColour": "#000000",  # 字幕背景颜色
             "Bold": -1,  # 加粗, -1 无效，0 不加，1 加粗

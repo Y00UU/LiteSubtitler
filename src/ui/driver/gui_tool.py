@@ -366,7 +366,7 @@ class GuiTool:
             QMessageBox.critical(parent, "错误", f"无法打开URL: {url}\n错误: {e}")
 
     @staticmethod
-    def select_medium_files(parent: QWidget) -> list[str]:
+    def select_medium_files(parent: QWidget, directory: str = "") -> list[str]:
         """打开文件选择对话框，选择支持的媒体文件（视频、音频、字幕）。
 
         Args:
@@ -389,7 +389,7 @@ class GuiTool:
         )
 
         # 打开文件选择对话框
-        file_names, _ = QFileDialog.getOpenFileNames(parent, "选择媒体文件", "", filter_str)
+        file_names, _ = QFileDialog.getOpenFileNames(parent=parent, caption="选择媒体文件", directory=directory, filter=filter_str)
         return file_names
 
     @staticmethod

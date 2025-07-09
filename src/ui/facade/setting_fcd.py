@@ -105,6 +105,10 @@ class SettingFacade(BaseConfigFacade):
         ui_map.add(("subtitle_args", "secondary_style", "PrimaryColour"), ui.freSecondColor.objectName())
         ui_map.add(("subtitle_args", "secondary_style", "OutlineColour"), ui.freSecondOutlineColor.objectName())
 
+        # 默认文件目录映射
+        ui_map.add(("files", "directory", "Input"), ui.edtDefaultOpenDirectory.objectName())
+        ui_map.add(("files", "directory", "Output"), ui.edtDefaultSaveDirectory.objectName())
+
         return ui_map
 
     def _fill_args_to_ui(self) -> None:
@@ -150,6 +154,8 @@ class SettingFacade(BaseConfigFacade):
             (self.ui.btnLlmRefresh, self._on_refresh_llm_models),
             (self.ui.btnWhisperExe, self._on_select_whisper_exe),
             (self.ui.btnWhisperDir, self._on_select_whisper_dir),
+            (self.ui.btnDefaultOpenDirectory, self._on_select_default_directory),
+            (self.ui.btnDefaultSaveDirectory, self._on_select_ouput_directory),
             (self.ui.btnCheckApi, self._on_check_llm_api),
             (self.ui.btnCancel, self._on_cancel_),
         ]
@@ -330,14 +336,12 @@ class SettingFacade(BaseConfigFacade):
         )
         if file:
             self.ui.edtWhisperExe.setText(file)
-            self.config_args["asr_args"]["faster_whisper_path"] = file
 
     def _on_select_whisper_dir(self) -> None:
         """选择FasterWhisper模型目录。"""
         directory = QFileDialog.getExistingDirectory(parent=self.dialog, caption="选择目录", directory=self.config_args["asr_args"]["model_dir"])
         if directory:
             self.ui.edtWhisperDir.setText(directory)
-            self.config_args["asr_args"]["model_dir"] = directory
 
     def _config_set_audio_language(self, item: AudioLanguageEnum) -> None:
         """设置音频语言配置。
@@ -348,6 +352,26 @@ class SettingFacade(BaseConfigFacade):
         if isinstance(item, AudioLanguageEnum):
             self.config_args["asr_args"]["language"] = item.code
             self.config_args["translate_args"]["source_language"] = item.value
+
+    def _on_select_default_directory(
+        self,
+    ) -> None:
+        """选择打开默认目录。"""
+        directory = QFileDialog.getExistingDirectory(
+            parent=self.dialog, caption="选择目录", directory=self.config_args["files"]["directory"]["Input"]
+        )
+        if directory:
+            self.ui.edtDefaultOpenDirectory.setText(directory)
+
+    def _on_select_ouput_directory(
+        self,
+    ) -> None:
+        """选择默认保存目录。"""
+        directory = QFileDialog.getExistingDirectory(
+            parent=self.dialog, caption="选择目录", directory=self.config_args["files"]["directory"]["Output"]
+        )
+        if directory:
+            self.ui.edtDefaultSaveDirectory.setText(directory)
 
     def _on_save_setting(self) -> None:
         """保存当前设置到配置文件。"""

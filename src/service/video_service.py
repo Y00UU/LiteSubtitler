@@ -5,6 +5,8 @@ import sys
 import time
 from typing import Literal, Optional, Dict, Callable, Any
 
+from attr import has
+
 from core.asr.asr_data import ASRData
 from core.base_object import BaseObject
 from core.video.ffmpeg_handler import FfmpegHandler
@@ -48,9 +50,10 @@ class VideoService(BaseObject):
                 "Style: Secondary,MicrosoftYaHei-Bold,30,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,"
                 "0,0,1,2,0,2,10,10,15,1"
             ),  # ASS 字幕样式
+            "Output": "",  # 字幕和视频文件输出路径
         }
 
-    def reset_args(self, the_args: Dict[str, Any]) -> None:
+    def reset_args(self, the_args: Dict[str, Any], **kwargs) -> None:
         """
         重置视频处理参数。
 
@@ -61,6 +64,10 @@ class VideoService(BaseObject):
 
         if "default_style" in the_args and "secondary_style" in the_args:
             self._args["style_str"] = ASRData.read_ass_style(the_args)
+
+        for key, value in kwargs.items():
+            if key == "files" and value is not None and value["directory"] is not None:
+                self._args["Output"] = value["directory"]["Output"]
 
     def reset_cuda(self, use_cuda: bool) -> None:
         self._args["use_cuda"] = use_cuda
@@ -262,7 +269,10 @@ class VideoService(BaseObject):
         if not video_file_vo.is_file:
             raise FileNotFoundError(f"视频文件 {video_file_path} 不存在")
 
-        output_dir = video_file_vo.file_dir
+        if len(self._args["Output"]) > 0 and os.path.exists(self._args["Output"]):
+            output_dir = self._args["Output"]
+        else:
+            output_dir = video_file_vo.file_dir
         os.makedirs(output_dir, exist_ok=True)
 
         output = os.path.join(output_dir, f"{video_file_vo.file_only_name}.{ext_name}")
@@ -304,7 +314,10 @@ class VideoService(BaseObject):
         if not video_file_vo.is_file:
             raise FileNotFoundError(f"视频文件 {video_file_path} 不存在")
 
-        temp_dir = os.path.join(video_file_vo.file_dir, "out")
+        if len(self._args["Output"]) > 0 and os.path.exists(self._args["Output"]):
+            temp_dir = self._args["Output"]
+        else:
+            temp_dir = os.path.join(video_file_vo.file_dir, "out")
         os.makedirs(temp_dir, exist_ok=True)
 
         temp_subtitle = os.path.join(temp_dir, f"temp_{int(time.time())}.ass")
@@ -312,7 +325,6 @@ class VideoService(BaseObject):
             asr_data.to_ass(style_str=self._args["style_str"], layout=self._args["subtitle_layout"], save_path=temp_subtitle)
             if os.path.exists(temp_subtitle):
                 output = os.path.join(temp_dir, f"{video_file_vo.file_only_name}-C.{video_file_vo.file_extension}")
-                time.sleep(2)
                 if self._args["is_soft_subtitle"]:
                     self._add_soft_subtitles(video_file_path, temp_subtitle, output)
                 else:

@@ -1,6 +1,7 @@
 # coding: utf8
 import copy
 import os
+from pathlib import Path
 import threading
 from typing import LiteralString
 
@@ -94,7 +95,7 @@ class MainController(BaseObject):
 
     def _active_config(self):
         """激活配置参数"""
-        self.video_service.reset_args(self.config_args["subtitle_args"])
+        self.video_service.reset_args(self.config_args["subtitle_args"], files=self.config_args["files"])
         self.asr_service.reset_args(self.config_args["asr_args"])
         self.translate_service.reset_args(self.config_args["translate_args"])
 
@@ -137,7 +138,7 @@ class MainController(BaseObject):
             task_id: 任务ID。
             msg: 提示信息。
         """
-        self.log_info(f"任务 {task_id} {msg}")
+        self.log_info(f"----------------------- 任务 {task_id}: {msg} -----------------------")
 
         self.task_count -= 1
         if self.task_count <= 0:
@@ -178,28 +179,26 @@ class MainController(BaseObject):
             task_id: 任务ID。
             video_file_path: 要处理的视频文件。
         """
-        file_vo = FileVO(video_file_path)
-        out_files = self._generate_output_file_paths(file_vo, ["_word.srt", "_asr.srt", "_translate.srt", ".srt"])
-        temp_wav_file = ""
-
+        temp_files = self._generate_output_file_paths(FileVO(video_file_path), ["_word.srt", "_asr.srt", "_translate.srt"])
+        if self.config_args["files"]["directory"]["Output"]:
+            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(video_file_path).stem + "-C.srt"
+        else:
+            out_files = Path(video_file_path).parent + "/" + Path(video_file_path).stem + "-C.srt"
         steps = [
-            (task_id, 10, "提取音频...", self.video_service.extract_wav, None),
-            (task_id, 30, "音频（按词）识别...", self.asr_service.asr_process, out_files[0]),
-            (task_id, 40, "字幕合并处理...", self.asr_service.merge_words, out_files[1]),
-            (task_id, 60, "翻译字幕...", self.translate_service.translate_srt, out_files[2]),
-            (task_id, 80, "字幕合成到视频...", self.video_service.embed_subtitles, video_file_path),
+            (task_id, 0, "提取音频...", self.video_service.extract_wav, None),
+            (task_id, 20, "音频（按词）识别...", self.asr_service.asr_process, temp_files[0]),
+            (task_id, 50, "字幕合并处理...", self.asr_service.merge_words, temp_files[1]),
+            (task_id, 60, "翻译字幕...", self.translate_service.translate_srt, temp_files[2]),
+            (task_id, 90, "字幕合成到视频...", self.video_service.embed_subtitles, video_file_path),
         ]
-
         processor = self._create_and_run_processor(steps, task_id, video_file_path)
         try:
             final_ret = processor.run(video_file_path)
             if final_ret is not None:
-                temp_wav_file = final_ret.audio_file
-                self._save_srt_file(asr_data=final_ret, out_srt_file=out_files[3])
+                self._save_srt_file(asr_data=final_ret, out_srt_file=out_files)
             return final_ret
         finally:
-            temp_files = out_files[:3]
-            self._on_task_finished(processor, [temp_wav_file, *temp_files])
+            self._on_task_finished(processor, temp_files)
 
     def _run_for_audio(self, task_id: str, audio_file_path: str):
         """
@@ -209,21 +208,21 @@ class MainController(BaseObject):
             task_id: 任务ID。
             audio_file_path: 要处理的音频文件。
         """
-        file_vo = FileVO(audio_file_path)
-        out_files = self._generate_output_file_paths(file_vo, ["_word.srt", "_asr.srt", "_translate.srt", ".srt"])
-
+        temp_files = self._generate_output_file_paths(FileVO(audio_file_path), ["_word.srt", "_asr.srt", "_translate.srt"])
+        if self.config_args["files"]["directory"]["Output"]:
+            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(audio_file_path).stem + "-C.srt"
+        else:
+            out_files = Path(audio_file_path).parent + "/" + Path(audio_file_path).stem + "-C.srt"
         steps = [
-            (task_id, 10, "音频（按词）识别...", self.asr_service.asr_process, out_files[0]),
-            (task_id, 30, "字幕合并处理...", self.asr_service.merge_words, out_files[1]),
-            (task_id, 60, "翻译字幕...", self.translate_service.translate_srt, out_files[2]),
-            (task_id, 90, "字幕整理...", self.organize_asr, out_files[3]),
+            (task_id, 0, "音频（按词）识别...", self.asr_service.asr_process, temp_files[0]),
+            (task_id, 20, "字幕合并处理...", self.asr_service.merge_words, temp_files[1]),
+            (task_id, 40, "翻译字幕...", self.translate_service.translate_srt, temp_files[2]),
+            (task_id, 90, "字幕整理...", self.organize_asr, out_files),
         ]
-
         processor = self._create_and_run_processor(steps, task_id, audio_file_path)
         try:
             return processor.run(audio_file_path)
         finally:
-            temp_files = out_files[:3]
             self._on_task_finished(processor, temp_files)
 
     def _run_for_srt(self, task_id: str, word_file_path: str):
@@ -235,20 +234,21 @@ class MainController(BaseObject):
             word_file_path: 按字词ASR识别的字幕文件。
         """
         file_vo = FileVO(word_file_path)
-        out_files = self._generate_output_file_paths(file_vo, ["_asr.srt", "_translate.srt", "_end.srt"])
-
+        temp_files = self._generate_output_file_paths(file_vo, ["_asr.srt", "_translate.srt"])
+        if self.config_args["files"]["directory"]["Output"]:
+            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(word_file_path).stem + "-C.srt"
+        else:
+            out_files = Path(word_file_path).parent + "/" + Path(word_file_path).stem + "-C.srt"
         steps = [
-            (task_id, 40, "字幕合并处理...", self.asr_service.merge_words, out_files[0]),
-            (task_id, 80, "翻译字幕...", self.translate_service.translate_srt, out_files[1]),
-            (task_id, 90, "字幕整理...", self.organize_asr, out_files[2]),
+            (task_id, 0, "字幕合并处理...", self.asr_service.merge_words, temp_files[0]),
+            (task_id, 30, "翻译字幕...", self.translate_service.translate_srt, temp_files[1]),
+            (task_id, 90, "字幕整理...", self.organize_asr, out_files),
         ]
-
         asr_data = AsrDataBuilder.from_subtitle_file(word_file_path)
         processor = self._create_and_run_processor(steps, task_id, asr_data)
         try:
             return processor.run(asr_data)
         finally:
-            temp_files = out_files[:2]
             self._on_task_finished(processor, temp_files)
 
     def organize_asr(self, out_file_path: str, asr_data: ASRData) -> ASRData:

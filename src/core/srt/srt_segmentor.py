@@ -301,6 +301,7 @@ class SrtSegmentor(BaseObject):
 
         merged_text = "".join(seg.text for seg in segs_to_merge)
         max_word_count = self._get_max_word_count(segs_to_merge)
+
         # 如果分段足够短或无法进一步拆分
         if StringUtils.count_words(merged_text) <= max_word_count or len(segs_to_merge) == 1:
             merged_seg = ASRDataSeg(merged_text.strip(), segs_to_merge[0].start_time, segs_to_merge[-1].end_time)
@@ -310,14 +311,16 @@ class SrtSegmentor(BaseObject):
         n = len(segs_to_merge)
         gaps = [segs_to_merge[i + 1].start_time - segs_to_merge[i].end_time for i in range(n - 1)]
         all_equal = all(abs(gap - gaps[0]) < 1e-6 for gap in gaps)
-        # all_equal = True
 
         # 确定分割点
         split_index = n // 2 if all_equal else self._find_split_index(segs_to_merge, n)
 
+        if split_index <= 1:
+            split_index = 0
+
         # 递归拆分
-        first_segs = segs_to_merge[:split_index]
-        second_segs = segs_to_merge[split_index:]
+        first_segs = segs_to_merge[: split_index + 1]
+        second_segs = segs_to_merge[split_index + 1 :]
         return self._split_long_segment(first_segs) + self._split_long_segment(second_segs)
 
     @staticmethod

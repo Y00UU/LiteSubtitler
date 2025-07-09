@@ -141,6 +141,11 @@ class AudioLanguageEnum(ThreeFieldEnum):
 
 class AudioTypeEnum(TwoFieldEnum):
     MOVIE = ("电影", "movie")
+    VIDEO = ("无", "video")
+    TV_DRAMA = ("电视剧", "TV drama")
+    CARTOON = ("动漫", "cartoon")
+    ONLINE_VIDEOS = ("网络视频", "online-videos")
+    WEB_DRAMA = ("网剧", "web drama")
     DOCUMENTARY = ("纪录片", "documentary")
     SONG = ("歌曲", "song")
     OPERA = ("歌剧", "opera")
@@ -163,13 +168,15 @@ class AudioTypeEnum(TwoFieldEnum):
 
 
 class SubjectContentEnum(TwoFieldEnum):
-    ENTERTAINMENT = ("娱乐", "aldut-video")
+    NORMAL = ("无", "normal")
+    ENTERTAINMENT = ("娱乐", "entertainment")
     ECONOMIC = ("经济", "economic")
-    EDUCATION = ("教育", "education")
-    PROGRAMING = ("编程", "programing")
     SOCIETY = ("社会", "society")
     HISTORY = ("历史", "history")
     SCIENCE = ("科学", "science")
+    EDUCATION = ("教育", "education")
+    CULTURAL = ("文化", "cultural")
+    ARTISTIC = ("艺术", "aldut-video")
 
     # 为了使枚举的成员名（如 ITEM_ONE）直接返回名称字段，而不是元组
     def __str__(self):
@@ -188,13 +195,15 @@ class SubjectContentEnum(TwoFieldEnum):
 
 
 class StyleLanguageEnum(TwoFieldEnum):
-    PORNOGRAPHIC = ("激情", "pornographic")
+    NORMAL = ("正常", "normal")
+    FUNNY = ("搞笑", "funny")
     PASSIONATE = ("热烈", "passionate")
     CALM = ("平淡", "calm")
     JOYFUL = ("快乐", "joyful")
     AMBIGUOUS = ("暧昧", "ambiguous")
     PEACEFUL = ("平和", "peaceful")
     SOLEMN = ("庄严", "solemn")
+    PORNOGRAPHIC = ("激情", "pornographic")
 
     # 为了使枚举的成员名（如 ITEM_ONE）直接返回名称字段，而不是元组
     def __str__(self):

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "AILiteSubtitler"
-version = "0.0.5"
+version = "0.0.6"
 description = "AI千言字幕"
 authors = ["Y00UU <12345@qq.com>"]
 readme = "README.md"

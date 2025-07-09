@@ -12,30 +12,26 @@
 - **💻 自定义较高** pyqt6 GUI二次开发比较方便快速
 - **🌐 源项目地址** https://github.com/Tobin-wu/LiteSubtitler
  
-## v0.0.5 - 20250525
+## v0.0.6 - 20250709
 -  修复
-   -  字幕合并执行失败问题
-   -  处理进度、步骤UI显示问题
-   -  FFmpeg添加硬字幕视频合成时CPU占用率过高
+   -  字幕识别后字幕合并出错问题
+   -  配置页面选择模型目录点击取消配置后仍配置成功问题
 -  修改
-   -  程序创建时窗口大小为窗口最小尺寸并居中显示
-   -  优化FFpemg、fasterwhiper、fasterwhiper模型、LLM配置检查条件和步骤
-   -  翻译提示词使用英文描述
-   -  优化主应用窗口、配置弹窗启动速度
-   -  添加文件时可直接选择所有支持的文件类型
-   -  硬字幕默认样式
+   -  提示词音频类型、主题内容、语言风格选项
+   -  默认字幕字体颜色
+   -  退出应用提示框Yes/No顺序
 -  新增
-   -  可单独提取音频文件
-   -  提示词加入字幕源语言、类型、主题
-   -  最小化后台挂起
-   -  .ui文件转换工具
+   -  设置工作目录
+   -  设置自动扫描添加工作目录下的文件
+   -  设置文件保存默认目录
+
 
 ## 📖1、快速开始
 
 - **下载Window压缩包**: 解压后就可以使用；
    - Github: [Window压缩包（LiteSubtitler-window-XXX.zip 或者 LiteSubtitler-window-XXX-full.7z）](https://github.com/Tobin-wu/LiteRecorder/releases)
 - **第一次使用**: 建议下载 -full.7z 版本，-full.7z 文件中打包了 FasterWhisper工具 和 small 模型，而对应的zip文件则不包括FasterWhisper工具和模型；
-- - **解压**: -full.7z 文件后，运行其中的 LiteSubtitler.exe 就可以；
+- **解压**: -full.7z 文件后，运行其中的 LiteSubtitler.exe 就可以；
 - **升级**: 只是要下载对应版本的 ZIP文件，解压后覆盖对应文件即可；
 - **编译运行**: 可以下载源代码然后自己编译运行；
 
@@ -370,11 +366,11 @@ poetry run python ./src/main.py
 #### 7.2.3 打包处理
 ```shell
 pip install pyinstaller
-pyinstaller LiteSubtitler.spec
+pyinstaller AILiteSubtitler.spec
 ```
 创建LiteSubtitler.spec文件
 ```shell
-pyinstaller --onefile --name LiteSubtitler -w src/main.py --specpath . 
+pyinstaller --onefile --name AILiteSubtitler -w src/main.py --specpath . 
 ```
 编译打包main.py
 ```shell

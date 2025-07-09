@@ -2,23 +2,18 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import LiteralString, Optional
 
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import (
-    QMainWindow,
-    QWidget,
-    QSystemTrayIcon,
-    QMenu,
-    QMessageBox,
-)
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QMainWindow, QWidget, QSystemTrayIcon, QMenu, QMessageBox, QFileDialog
 
 from config import ConfigTool, GITHUB_REPO_URL
 from controller.subtitles_controller import MainController
-from core.llm.opanai_checker import OpenAiChecker
 from enums.language_enums import AudioLanguageEnum, SubtitleLanguageEnum
-from enums.supported_subtitle_enum import SubtitleLayoutEnum
+from enums.supported_audio_enum import SupportedAudioEnum
+from enums.supported_subtitle_enum import SubtitleLayoutEnum, SupportedSubtitleEnum
+from enums.supported_video_enum import SupportedVideoEnum
 from enums.translate_mode_enum import TranslateModeEnum
 from ui.base_config_facade import BaseConfigFacade
 from ui.data.array_table_model import ArrayTableModel
@@ -64,8 +59,8 @@ class MainWindow(QMainWindow):
             self,
             "应用",
             "退出应用程序吗",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.Yes,
         )
         if reply == QMessageBox.StandardButton.Yes:
             self.tray_icon.hide()
@@ -81,7 +76,6 @@ class MainFacade(BaseConfigFacade):
     def __init__(self):
         """初始化实例。"""
         super().__init__(log_to_ui_func=self.write_log, config=ConfigTool.read_config_setting())
-
         self.llm_ok = False  # LLM连接状态
 
         # 初始化主窗口
@@ -178,9 +172,12 @@ class MainFacade(BaseConfigFacade):
         # 按钮事件绑定
         buttons = [
             (self.ui.btnAddFile, self._on_add_file_),
+            (self.ui.btnScanAddFiles, self._on_scan_add_files_),
             (self.ui.btnClearFile, self._on_clear_all_file),
             (self.ui.btnStart, self._on_start_run),
             (self.ui.btnStop, self._on_stop_run),
+            (self.ui.btnDefaultOpenDirectory, self._on_select_default_dir),
+            (self.ui.btnDefaultSaveDirectory, self._on_select_output_dir),
         ]
         for btn, handler in buttons:
             btn.clicked.connect(handler)
@@ -323,7 +320,10 @@ class MainFacade(BaseConfigFacade):
         """
         self.ui.btnStart.setEnabled(enabled)
         self.ui.btnAddFile.setEnabled(enabled)
+        self.ui.btnScanAddFiles.setEnabled(enabled)
         self.ui.btnClearFile.setEnabled(enabled)
+        self.ui.btnDefaultOpenDirectory.setEnabled(enabled)
+        self.ui.btnDefaultSaveDirectory.setEnabled(enabled)
 
         # 遍历所有子控件并设置启用状态
         GuiTool.set_ui_enabled(self.ui.freSetting.findChildren(QWidget), enabled)
@@ -371,7 +371,7 @@ class MainFacade(BaseConfigFacade):
 
     def _on_add_file_(self) -> None:
         """显示选择文件对话框并添加文件。"""
-        file_names = GuiTool.select_medium_files(self.mainWindow)
+        file_names = GuiTool.select_medium_files(parent=self.mainWindow, directory=self.config_args["files"]["directory"]["Input"])
         if file_names:
             for file_name in file_names:
                 self.model.append_row(
@@ -384,6 +384,48 @@ class MainFacade(BaseConfigFacade):
                     ]
                 )
 
+    def _on_scan_add_files_(self) -> None:
+        """扫描字幕目录下的文件并添加"""
+        # 获取支持的视频、音频、字幕文件格式
+        video_formats = SupportedVideoEnum.filter_formats()
+        audio_formats = SupportedAudioEnum.filter_formats()
+        subtitle_formats = SupportedSubtitleEnum.filter_formats()
+        subtitle_default_dir = Path(self.config_args["files"]["directory"]["Input"])
+        patterns: LiteralString = f"{video_formats} {audio_formats} {subtitle_formats}"
+        media_files = []
+        for pattern in patterns.split():
+            media_files.extend(f for f in subtitle_default_dir.glob(pattern) if f.is_file())
+        media_files = sorted(set(media_files), reverse=True)
+        file_names = [vf.resolve() for vf in media_files]
+        for file_name in file_names:
+            self.model.append_row(
+                [
+                    UuidUtils.generate_guid(),
+                    Path(file_name).name,
+                    "0",
+                    "待处理",
+                    f"{file_name}",
+                ]
+            )
+
+    def _on_select_default_dir(self) -> None:
+        """选择打开默认目录。"""
+        directory = QFileDialog.getExistingDirectory(
+            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files"]["directory"]["Input"]
+        )
+        if directory:
+            self.ui.edtDefaultOpenDirectory.setText(directory)
+            self.config_args["files"]["directory"]["Input"] = directory
+
+    def _on_select_output_dir(self) -> None:
+        """选择默认保存目录。"""
+        directory = QFileDialog.getExistingDirectory(
+            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files"]["directory"]["Output"]
+        )
+        if directory:
+            self.ui.edtDefaultSaveDirectory.setText(directory)
+            self.config_args["files"]["directory"]["Output"] = directory
+
     def _build_table_view_model(self) -> ArrayTableModel:
         """构建表格视图模型。
 
@@ -391,6 +433,6 @@ class MainFacade(BaseConfigFacade):
             ArrayTableModel: 构建好的表格视图模型。
         """
         data = [["0", "*", "0", "", ""]]
-        headers = ["id", "名称", "进度", "步骤", "路径"]
+        headers = ["任务id", "文件名称", "处理进度", "处理步骤", "文件路径"]
         sizes = [250, 200, 60, 200]
         return GuiTool.build_tv_model(tv=self.ui.tbvTask, data=data, headers=headers, sizes=sizes)
