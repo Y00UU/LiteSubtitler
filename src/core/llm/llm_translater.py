@@ -1,12 +1,12 @@
 # coding: utf8
 import copy
 import difflib
-from random import seed
-import re
 from typing import Dict, Callable, List
 
 import retry
 from openai import OpenAI
+
+import re
 
 from core.base_object import BaseObject
 from core.srt.srt_aligner import SrtAligner
@@ -225,7 +225,7 @@ class LlmTranslater(BaseObject):
             {"role": "system", "content": prompt},
             {
                 "role": "user",
-                "content": f"Please translate the following subtitles to ({self._get_target_language_en()}):\n```\n{str(original_sub)}\n```",
+                "content": f"Please translate the following subtitles to ({SubtitleLanguageEnum.read_desc(self.target_language)}):\n```\n{str(original_sub)}\n```",
             },
         ]
         response = self.client.chat.completions.create(model=self.model, stream=False, messages=message, temperature=0.7)
@@ -236,17 +236,9 @@ class LlmTranslater(BaseObject):
             raise RuntimeError(f"翻译结果错误, 返回类型不正确，或者翻译后的字幕条数不正确")
         return self.build_translated_ret(original_sub, response_content)
 
-    def _get_target_language_en(self) -> str:
-        m = re.search(r"\((.*?)\)", SubtitleLanguageEnum.read_code(self.target_language))
-        if m:
-            return m.group(1)
-        else:
-            return self.target_language
-
     def _format_prompt(self, prompt_fmt: str) -> str:
         try:
-            prompt = prompt_fmt.replace("[TargetLanguage]", self._get_target_language_en())
-            print(f"self.source_language={self.source_language}, source_language{AudioLanguageEnum.read_desc(self.source_language)}")
+            prompt = prompt_fmt.replace("[TargetLanguage]", SubtitleLanguageEnum.read_desc(self.target_language))
             prompt = prompt.replace("[SourceLanguage]", AudioLanguageEnum.read_desc(self.source_language))
             prompt = prompt.replace("[AudioType]", AudioTypeEnum.read_code(self.audio_type))
             prompt = prompt.replace("[SubjectContent]", SubjectContentEnum.read_code(self.subject_content))

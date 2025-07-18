@@ -6,7 +6,7 @@ import os
 import sys
 from typing import Dict, Any, List, Optional
 
-VERSION = "v0.0.6"
+VERSION = "v0.1.0"
 APP_TITLE = "AI千言字幕"
 APP_NAME = "AILiteSubtitler"
 APP_LICENSE = "GPLv3"
@@ -78,7 +78,7 @@ DEFAULT_ARGS = {
         "level": logging.INFO,
         "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     },
-    "files": {
+    "files_args": {
         "directory": {
             "Input": ROOT_PATH,  # 默认文件选择打开目录
             "Output": OUTPUT_PATH,  # 默认文件输出目录
@@ -166,6 +166,10 @@ DEFAULT_ARGS = {
             "MarginV": 15,  # 垂直边距, 就是 subtitle_margin_v
             "Encoding": 1,  # 编码
         },
+    },
+    "api_server_args": {
+        "host": "0.0.0.0",
+        "port": "10000",
     },
 }
 

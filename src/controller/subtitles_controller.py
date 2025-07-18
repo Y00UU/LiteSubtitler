@@ -3,9 +3,10 @@ import copy
 import os
 from pathlib import Path
 import threading
-from typing import LiteralString
+from typing import Any, LiteralString
 
 from PyQt6.QtWidgets import QApplication
+from fastapi import WebSocket
 
 from core.asr.asr_data import ASRData
 from core.asr.asr_data_builder import AsrDataBuilder
@@ -14,8 +15,7 @@ from enums.supported_audio_enum import SupportedAudioEnum
 from enums.supported_subtitle_enum import SupportedSubtitleEnum
 from enums.supported_video_enum import SupportedVideoEnum
 from model.file_vo import FileVO
-from service import asr_service
-from service import translate_service
+from service.api_service import ApiServer, WebSocketManager
 from service.asr_service import AsrService
 from service.translate_service import TranslateService
 from service.video_service import VideoService
@@ -49,6 +49,7 @@ class MainController(BaseObject):
         self.video_service = VideoService(log_to_ui_func=log_to_ui_func)  # 视频处理服务
         self.asr_service = AsrService(log_to_ui_func=log_to_ui_func)  # ASR识别服务
         self.translate_service = TranslateService(log_to_ui_func=log_to_ui_func)  # 翻译服务
+        self.api_service = ApiServer(log_to_ui_func=log_to_ui_func)
 
         self.scheduler = TaskScheduler(log_to_ui_func=log_to_ui_func)  # 任务调度器
         self.stopped = False
@@ -93,9 +94,30 @@ class MainController(BaseObject):
             self._active_config()  # 激活配置参数
             self.scheduler.run()  # 用指定参数执行任务
 
+    def api_server_request_reg(self, slots_dict: dict[str, Any]):
+        self.api_service.request_scan_connect(slots_dict["scan"])
+        self.api_service.request_add_connect(slots_dict["add"])
+        self.api_service.request_start_connect(slots_dict["start"])
+        self.api_service.request_stop_connect(slots_dict["stop"])
+        self.api_service.request_clear_connect(slots_dict["clear"])
+        self.api_service.request_selectLang_connect(slots_dict["selectLang"])
+        self.api_service.request_exit_connect(slots_dict["exit"])
+
+    def api_server_start(self, args):
+        self.api_service.run(host=args["host"], port=int(args["port"]))
+
+    def api_server_stop(self):
+        self.api_service.shutdown()
+
+    def api_server_callback(self, callback_func_name: str, arg: any):
+        self.api_service.callback_call(callback_func_name=callback_func_name, arg=arg)
+
+    def api_server_writelog(self, log_text: str):
+        self.api_service.response_call(WebSocketManager.WebSocketConnection.CLIENT_LOG, arg=log_text)
+
     def _active_config(self):
         """激活配置参数"""
-        self.video_service.reset_args(self.config_args["subtitle_args"], files=self.config_args["files"])
+        self.video_service.reset_args(self.config_args["subtitle_args"], files_args=self.config_args["files_args"])
         self.asr_service.reset_args(self.config_args["asr_args"])
         self.translate_service.reset_args(self.config_args["translate_args"])
 
@@ -146,6 +168,8 @@ class MainController(BaseObject):
                 self.finished_all_callback()
                 self.log_info("所有任务执行结束")
 
+        self.api_service.response_call(WebSocketManager.WebSocketConnection.PROCESS_PROGRESS, arg=self.task_count)
+
     def on_task_progress(self, task_id: str, rate: int, msg: str):
         """
         任务进度更新时的回调函数。
@@ -180,8 +204,8 @@ class MainController(BaseObject):
             video_file_path: 要处理的视频文件。
         """
         temp_files = self._generate_output_file_paths(FileVO(video_file_path), ["_word.srt", "_asr.srt", "_translate.srt"])
-        if self.config_args["files"]["directory"]["Output"]:
-            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(video_file_path).stem + "-C.srt"
+        if self.config_args["files_args"]["directory"]["Output"]:
+            out_files = self.config_args["files_args"]["directory"]["Output"] + "/" + Path(video_file_path).stem + "-C.srt"
         else:
             out_files = Path(video_file_path).parent + "/" + Path(video_file_path).stem + "-C.srt"
         steps = [
@@ -209,8 +233,8 @@ class MainController(BaseObject):
             audio_file_path: 要处理的音频文件。
         """
         temp_files = self._generate_output_file_paths(FileVO(audio_file_path), ["_word.srt", "_asr.srt", "_translate.srt"])
-        if self.config_args["files"]["directory"]["Output"]:
-            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(audio_file_path).stem + "-C.srt"
+        if self.config_args["files_args"]["directory"]["Output"]:
+            out_files = self.config_args["files_args"]["directory"]["Output"] + "/" + Path(audio_file_path).stem + "-C.srt"
         else:
             out_files = Path(audio_file_path).parent + "/" + Path(audio_file_path).stem + "-C.srt"
         steps = [
@@ -235,8 +259,8 @@ class MainController(BaseObject):
         """
         file_vo = FileVO(word_file_path)
         temp_files = self._generate_output_file_paths(file_vo, ["_asr.srt", "_translate.srt"])
-        if self.config_args["files"]["directory"]["Output"]:
-            out_files = self.config_args["files"]["directory"]["Output"] + "/" + Path(word_file_path).stem + "-C.srt"
+        if self.config_args["files_args"]["directory"]["Output"]:
+            out_files = self.config_args["files_args"]["directory"]["Output"] + "/" + Path(word_file_path).stem + "-C.srt"
         else:
             out_files = Path(word_file_path).parent + "/" + Path(word_file_path).stem + "-C.srt"
         steps = [

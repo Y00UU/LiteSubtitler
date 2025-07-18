@@ -66,7 +66,7 @@ class VideoService(BaseObject):
             self._args["style_str"] = ASRData.read_ass_style(the_args)
 
         for key, value in kwargs.items():
-            if key == "files" and value is not None and value["directory"] is not None:
+            if key == "files_args" and value is not None and value["directory"] is not None:
                 self._args["Output"] = value["directory"]["Output"]
 
     def reset_cuda(self, use_cuda: bool) -> None:

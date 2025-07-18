@@ -1,4 +1,5 @@
 # coding: utf8
+
 import ctypes
 import os
 import sys
@@ -13,6 +14,14 @@ from ui.facade.main_fcd import MainFacade
 
 # 设置应用程序的用户模型ID，以确保任务栏图标显示正确
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_NAME)
+
+
+# 如果是打包后的环境并且没有命令行，把 stdout/stderr 重定向到 log 文件
+if getattr(sys, "frozen", False) and sys.stdout is None:
+    basedir = sys._MEIPASS if hasattr(sys, "_MEIPASS") else os.path.dirname(sys.executable)
+    log_file = os.path.join(basedir, "app.log")
+    sys.stdout = open(log_file, "w", encoding="utf-8")
+    sys.stderr = sys.stdout
 
 
 class MainApp(BaseObject):

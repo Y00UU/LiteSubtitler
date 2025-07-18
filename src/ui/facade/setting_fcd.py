@@ -106,8 +106,12 @@ class SettingFacade(BaseConfigFacade):
         ui_map.add(("subtitle_args", "secondary_style", "OutlineColour"), ui.freSecondOutlineColor.objectName())
 
         # 默认文件目录映射
-        ui_map.add(("files", "directory", "Input"), ui.edtDefaultOpenDirectory.objectName())
-        ui_map.add(("files", "directory", "Output"), ui.edtDefaultSaveDirectory.objectName())
+        ui_map.add(("files_args", "directory", "Input"), ui.edtDefaultOpenDirectory.objectName())
+        ui_map.add(("files_args", "directory", "Output"), ui.edtDefaultSaveDirectory.objectName())
+
+        # API服务配置
+        ui_map.add(("api_server_args", "host"), ui.edtAPIHostName.objectName())
+        ui_map.add(("api_server_args", "port"), ui.edtAPIPort.objectName())
 
         return ui_map
 
@@ -303,7 +307,7 @@ class SettingFacade(BaseConfigFacade):
     def _load_llm_models_async_ui(self, models: list):
         translate_args = self.config_args["translate_args"]
         GuiTool().update_llm_models_list(
-            models,
+            models=models,
             cbb_llm_model=self.ui.cbbLlmModel,
             current_model=translate_args["llm_model"],
             config_args=self.config_args,
@@ -358,7 +362,7 @@ class SettingFacade(BaseConfigFacade):
     ) -> None:
         """选择打开默认目录。"""
         directory = QFileDialog.getExistingDirectory(
-            parent=self.dialog, caption="选择目录", directory=self.config_args["files"]["directory"]["Input"]
+            parent=self.dialog, caption="选择目录", directory=self.config_args["files_args"]["directory"]["Input"]
         )
         if directory:
             self.ui.edtDefaultOpenDirectory.setText(directory)
@@ -368,7 +372,7 @@ class SettingFacade(BaseConfigFacade):
     ) -> None:
         """选择默认保存目录。"""
         directory = QFileDialog.getExistingDirectory(
-            parent=self.dialog, caption="选择目录", directory=self.config_args["files"]["directory"]["Output"]
+            parent=self.dialog, caption="选择目录", directory=self.config_args["files_args"]["directory"]["Output"]
         )
         if directory:
             self.ui.edtDefaultSaveDirectory.setText(directory)

@@ -1,5 +1,6 @@
 # coding: utf8
 from enum import Enum
+import re
 
 from enums.base_enums import ThreeFieldEnum, TwoFieldEnum
 
@@ -90,10 +91,19 @@ class SubtitleLanguageEnum(Enum):
     ISIZULU = "祖鲁语(isiZulu)"
 
     @staticmethod
-    def read_code(value: str):
+    def read_name(value: str):
         for item in SubtitleLanguageEnum:
             if item._value_ == value:
                 return item._value_
+        return None
+
+    @staticmethod
+    def read_desc(value: str):
+        for item in SubtitleLanguageEnum:
+            if item._value_ == value:
+                m = re.search(r"\((.*?)\)", value)
+                if m:
+                    return m.group(1)
         return None
 
 

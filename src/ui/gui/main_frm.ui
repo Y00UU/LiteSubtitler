@@ -538,6 +538,26 @@
          </item>
         </layout>
        </item>
+       <item>
+        <widget class="QRadioButton" name="rbAPIServer">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>API服务</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../resources/images/icons/link.png</normaloff>../../../resources/images/icons/link.png</iconset>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

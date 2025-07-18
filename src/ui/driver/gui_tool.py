@@ -1,6 +1,8 @@
 # coding: utf8
+from genericpath import exists
 import logging
 import os
+from pathlib import Path
 import webbrowser
 from datetime import datetime
 from typing import List, Optional, Callable, Dict
@@ -264,7 +266,7 @@ class GuiTool:
         return None
 
     @staticmethod
-    def write_log(msg: str, logger_name: str, level: int, txt_log: QTextEdit):
+    def write_log(msg: str, logger_name: str, level: int, txt_log: QTextEdit) -> str:
         """将日志信息写入QTextEdit组件中。
 
         Args:
@@ -278,7 +280,7 @@ class GuiTool:
         log_level = logging.getLevelName(level)
 
         # 构建日志输出信息
-        log_msg = f"{log_time} - {logger_name} - {log_level} - {msg}"
+        log_msg = f"{log_time} - {logger_name} - {log_level} - {msg}\n"
 
         # 如果日志行数超过10000行，清空日志
         if txt_log.document().lineCount() > 10000:
@@ -287,8 +289,9 @@ class GuiTool:
         # 将日志信息插入到QTextEdit的末尾
         cursor = txt_log.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
-        cursor.insertText(log_msg + "\n")
+        cursor.insertText(log_msg)
         txt_log.setTextCursor(cursor)
+        return log_msg
 
     @staticmethod
     def widget_to_config(widgets: list[QWidget], config_args, ui_map: UniqueKeyValueMap):
@@ -390,6 +393,25 @@ class GuiTool:
 
         # 打开文件选择对话框
         file_names, _ = QFileDialog.getOpenFileNames(parent=parent, caption="选择媒体文件", directory=directory, filter=filter_str)
+        return file_names
+
+    @staticmethod
+    def scan_medium_files(directory: str = "", filter: str = "") -> list[str]:
+        """扫描目录下的文件并添加"""
+        if len(directory) <= 0 or os.path.exists(directory) is False:
+            return []
+        default_dir = Path(directory)
+        if len(filter) <= 0:
+            video_formats = SupportedVideoEnum.filter_formats()
+            audio_formats = SupportedAudioEnum.filter_formats()
+            subtitle_formats = SupportedSubtitleEnum.filter_formats()
+            filter = f"{video_formats} {audio_formats} {subtitle_formats}"
+        patterns = filter
+        media_files = []
+        for pattern in patterns.split():
+            media_files.extend(f for f in default_dir.glob(pattern) if f.is_file())
+        media_files = sorted(set(media_files), reverse=True)
+        file_names = [vf.resolve() for vf in media_files]
         return file_names
 
     @staticmethod

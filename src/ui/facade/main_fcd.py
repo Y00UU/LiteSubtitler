@@ -1,8 +1,10 @@
 # coding: utf8
+from concurrent.futures import thread
 import logging
 import os
 from pathlib import Path
-from typing import LiteralString, Optional
+import sys
+from typing import Optional
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon
@@ -11,9 +13,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QSystemTrayIcon, QMenu, QMessa
 from config import ConfigTool, GITHUB_REPO_URL
 from controller.subtitles_controller import MainController
 from enums.language_enums import AudioLanguageEnum, SubtitleLanguageEnum
-from enums.supported_audio_enum import SupportedAudioEnum
-from enums.supported_subtitle_enum import SubtitleLayoutEnum, SupportedSubtitleEnum
-from enums.supported_video_enum import SupportedVideoEnum
+from enums.supported_subtitle_enum import SubtitleLayoutEnum
 from enums.translate_mode_enum import TranslateModeEnum
 from ui.base_config_facade import BaseConfigFacade
 from ui.data.array_table_model import ArrayTableModel
@@ -104,6 +104,20 @@ class MainFacade(BaseConfigFacade):
         if not self.controller.check_tool():
             self.log_warning(f"请从Github下载完整版 -large-v2 版：{GITHUB_REPO_URL}")
 
+        self.controller.api_server_request_reg(
+            dict(
+                {
+                    "scan": self._on_scan_add_files_,
+                    "add": self._add_files_,
+                    "start": self._on_start_run,
+                    "stop": self._on_stop_run,
+                    "clear": self._on_clear_all_file,
+                    "selectLang": self._on_select_lang,
+                    "exit": self._on_quit_application_,
+                }
+            )
+        )
+
     def show_main_form(self) -> None:
         """显示主窗口。"""
         self.mainWindow.show()
@@ -146,7 +160,8 @@ class MainFacade(BaseConfigFacade):
         """
         logger_name = logger_name or self.__class__.__name__
         if self.config_args["LOG_SETTING"]["level"] <= level:
-            GuiTool.write_log(msg=msg, logger_name=logger_name, level=level, txt_log=self.ui.txtLog)
+            log_text = GuiTool.write_log(msg=msg, logger_name=logger_name, level=level, txt_log=self.ui.txtLog)
+            self.controller.api_server_writelog(log_text=log_text)
 
     def _init_form_(self) -> None:
         """初始化窗口。"""
@@ -185,7 +200,8 @@ class MainFacade(BaseConfigFacade):
         self.ui.actClearFile.triggered.connect(self._on_clear_all_file)
         self.ui.actAddFile.triggered.connect(self._on_add_file_)
         self.ui.actSetting.triggered.connect(self._on_open_setting_dlg_)
-        self.ui.actExit.triggered.connect(self.mainWindow.close)
+        # self.ui.actExit.triggered.connect(self.mainWindow.close)
+        self.ui.actExit.triggered.connect(self._on_quit_application_)
 
         self.ui.actLlmChecker.triggered.connect(self._on_open_prompt_dlg_)
         self.ui.actSubtitleEmbed.triggered.connect(self._on_open_srt_embed_dlg_)
@@ -193,6 +209,8 @@ class MainFacade(BaseConfigFacade):
 
         self.ui.actGithub.triggered.connect(lambda: self._on_open_url_(GITHUB_REPO_URL))
         self.ui.actAbout.triggered.connect(self._on_open_about_dlg_)
+
+        self.ui.rbAPIServer.toggled.connect(self._on_api_server_toggled)
 
         enable_languages = self._read_enable_languages_()
 
@@ -324,6 +342,7 @@ class MainFacade(BaseConfigFacade):
         self.ui.btnClearFile.setEnabled(enabled)
         self.ui.btnDefaultOpenDirectory.setEnabled(enabled)
         self.ui.btnDefaultSaveDirectory.setEnabled(enabled)
+        self.ui.rbAPIServer.setEnabled(enabled)
 
         # 遍历所有子控件并设置启用状态
         GuiTool.set_ui_enabled(self.ui.freSetting.findChildren(QWidget), enabled)
@@ -341,6 +360,7 @@ class MainFacade(BaseConfigFacade):
             self.run_status = RUN_STATUS_DOING
             self._ui_obj_enabled(False)
             self._process_tasks(tasks)
+            self.log_info("【开始执行任务】")
         else:
             self.log_warning("请先选择要处理的视频文件。")
 
@@ -363,68 +383,61 @@ class MainFacade(BaseConfigFacade):
             self.controller.stop()
         self._ui_obj_enabled(True)
         self.run_status = RUN_STATUS_INIT
+        self.log_info("【停止运行任务】")
 
     def _on_clear_all_file(self) -> None:
         """清除所有文件。"""
         if self.run_status == RUN_STATUS_INIT:
             self.model.clear()
+            self.log_info("【清空任务列表】")
+
+    def _add_files_(self, file_names: list[str]) -> None:
+        if file_names:
+            add_cnt = 0
+            for file_name in file_names:
+                if os.path.exists(file_name) is True:
+                    self.model.append_row(
+                        [
+                            UuidUtils.generate_guid(),
+                            Path(file_name).name,
+                            "0",
+                            "待处理",
+                            f"{file_name}",
+                        ]
+                    )
+                    add_cnt += 1
+                    self.log_info(f"【添加文件】：{file_name}")
+                else:
+                    self.log_warning(f"【添加文件】：{file_name} 不存在！")
+            self.log_info(f"本次添加数量：{add_cnt}")
 
     def _on_add_file_(self) -> None:
         """显示选择文件对话框并添加文件。"""
-        file_names = GuiTool.select_medium_files(parent=self.mainWindow, directory=self.config_args["files"]["directory"]["Input"])
-        if file_names:
-            for file_name in file_names:
-                self.model.append_row(
-                    [
-                        UuidUtils.generate_guid(),
-                        Path(file_name).name,
-                        "0",
-                        "待处理",
-                        file_name,
-                    ]
-                )
+        file_names = GuiTool.select_medium_files(parent=self.mainWindow, directory=self.config_args["files_args"]["directory"]["Input"])
+        self._add_files_(file_names)
 
     def _on_scan_add_files_(self) -> None:
         """扫描字幕目录下的文件并添加"""
-        # 获取支持的视频、音频、字幕文件格式
-        video_formats = SupportedVideoEnum.filter_formats()
-        audio_formats = SupportedAudioEnum.filter_formats()
-        subtitle_formats = SupportedSubtitleEnum.filter_formats()
-        subtitle_default_dir = Path(self.config_args["files"]["directory"]["Input"])
-        patterns: LiteralString = f"{video_formats} {audio_formats} {subtitle_formats}"
-        media_files = []
-        for pattern in patterns.split():
-            media_files.extend(f for f in subtitle_default_dir.glob(pattern) if f.is_file())
-        media_files = sorted(set(media_files), reverse=True)
-        file_names = [vf.resolve() for vf in media_files]
-        for file_name in file_names:
-            self.model.append_row(
-                [
-                    UuidUtils.generate_guid(),
-                    Path(file_name).name,
-                    "0",
-                    "待处理",
-                    f"{file_name}",
-                ]
-            )
+        file_names = GuiTool.scan_medium_files(self.config_args["files_args"]["directory"]["Input"])
+        self._add_files_(file_names)
 
     def _on_select_default_dir(self) -> None:
         """选择打开默认目录。"""
         directory = QFileDialog.getExistingDirectory(
-            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files"]["directory"]["Input"]
+            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files_args"]["directory"]["Input"]
         )
         if directory:
             self.ui.edtDefaultOpenDirectory.setText(directory)
-            self.config_args["files"]["directory"]["Input"] = directory
+            self.config_args["files_args"]["directory"]["Input"] = directory
 
     def _on_select_output_dir(self) -> None:
         """选择默认保存目录。"""
         directory = QFileDialog.getExistingDirectory(
-            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files"]["directory"]["Output"]
+            parent=self.mainWindow, caption="选择目录", directory=self.config_args["files_args"]["directory"]["Output"]
         )
         if directory:
             self.ui.edtDefaultSaveDirectory.setText(directory)
-            self.config_args["files"]["directory"]["Output"] = directory
+            self.config_args["files_args"]["directory"]["Output"] = directory
 
     def _build_table_view_model(self) -> ArrayTableModel:
         """构建表格视图模型。
@@ -436,3 +449,21 @@ class MainFacade(BaseConfigFacade):
         headers = ["任务id", "文件名称", "处理进度", "处理步骤", "文件路径"]
         sizes = [250, 200, 60, 200]
         return GuiTool.build_tv_model(tv=self.ui.tbvTask, data=data, headers=headers, sizes=sizes)
+
+    def _on_api_server_toggled(self, checked) -> None:
+        """API服务监听开关"""
+        if checked:
+            self.controller.api_server_start(self.config_args["api_server_args"])
+        else:
+            self.controller.api_server_stop()
+
+    def _on_select_lang(self, source: str, target: str):
+        if AudioLanguageEnum.read_code(source) is not None:
+            self.ui.cbbSourceLanguage.setCurrentText(source)
+            self.log_info(f"选择源语言：{source}")
+        if SubtitleLanguageEnum.read_name(target) is not None:
+            self.ui.cbbTargetLanguage.setCurrentText(target)
+            self.log_info(f"选择目标语言：{target}")
+
+    def _on_quit_application_(self):
+        sys.exit()

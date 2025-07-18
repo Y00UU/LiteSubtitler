@@ -1,4 +1,5 @@
 # coding: utf8
+from enum import Enum
 import time
 
 
@@ -8,7 +9,7 @@ class CommonUtils:
     @staticmethod
     def hex_to_int(hex_color):
         # 去掉颜色值前面的 '#' 符号
-        hex_color = hex_color.lstrip('#')
+        hex_color = hex_color.lstrip("#")
         # 将十六进制字符串转换为整数
         color_int = int(hex_color, 16)
         return color_int
@@ -20,8 +21,9 @@ class CommonUtils:
         return color_int
 
     @staticmethod
-    def print_progress_bar(iteration: int, total: int, prefix: str = '', suffix: str = '',
-                           decimals: int = 1, length: int = 50, fill: str = '█', print_end: str = ""):
+    def print_progress_bar(
+        iteration: int, total: int, prefix: str = "", suffix: str = "", decimals: int = 1, length: int = 50, fill: str = "█", print_end: str = ""
+    ):
         """在终端中打印进度条。
 
         该方法用于在终端中动态显示进度条，适用于长时间任务的进度跟踪。
@@ -41,12 +43,44 @@ class CommonUtils:
         # 计算填充的长度
         filled_length = int(length * iteration // total)
         # 构建进度条字符串
-        bar = fill * filled_length + '-' * (length - filled_length)
+        bar = fill * filled_length + "-" * (length - filled_length)
         # 打印进度条
-        print(f'\r{prefix} |{bar}| {percent}% {suffix}', end=print_end)
+        print(f"\r{prefix} |{bar}| {percent}% {suffix}", end=print_end)
         # 当进度达到100%时打印新行
         if iteration == total:
             print()
+
+    from typing import Any
+
+    @staticmethod
+    def convert_to_str(message: Any) -> str:
+        """
+        将基础数据类型的 message 转换为字符串。
+
+        支持的类型包括：
+        - int, float
+        - bool
+        - str（原样返回）
+        - None
+        - list, tuple, set, dict（使用 str() 原生转换）
+        - Enum 成员（返回 name 或 value）
+        """
+        if isinstance(message, str):
+            return message
+        elif message is None:
+            return "None"
+        elif isinstance(message, bool):
+            return str(message).lower()  # "true" 或 "false"
+        elif isinstance(message, (int, float)):
+            return str(message)
+        elif isinstance(message, list) or isinstance(message, tuple) or isinstance(message, set):
+            return ", ".join(CommonUtils.convert_to_str(item) for item in message)
+        elif isinstance(message, dict):
+            return "{" + ", ".join(f"{CommonUtils.convert_to_str(k)}: {CommonUtils.convert_to_str(v)}" for k, v in message.items()) + "}"
+        elif isinstance(message, Enum):
+            return str(message.value)  # 或者返回 message.name，根据需求选择
+        else:
+            return str(message)
 
 
 if __name__ == "__main__":
@@ -54,4 +88,4 @@ if __name__ == "__main__":
     total_steps = 100
     for i in range(total_steps + 1):
         time.sleep(0.1)  # 模拟工作负载
-        CommonUtils.print_progress_bar(i, total_steps, prefix='进度:', suffix='完成', length=50)
+        CommonUtils.print_progress_bar(i, total_steps, prefix="进度:", suffix="完成", length=50)

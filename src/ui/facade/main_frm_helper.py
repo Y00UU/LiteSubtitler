@@ -110,7 +110,7 @@ class MainFrmHelper:
         ui_map.add(("subtitle_args", "subtitle_layout"), ui.cbbSubtitleLayout.objectName())
 
         # 保存文件目录
-        ui_map.add(("files", "directory", "Input"), ui.edtDefaultOpenDirectory.objectName())
-        ui_map.add(("files", "directory", "Output"), ui.edtDefaultSaveDirectory.objectName())
+        ui_map.add(("files_args", "directory", "Input"), ui.edtDefaultOpenDirectory.objectName())
+        ui_map.add(("files_args", "directory", "Output"), ui.edtDefaultSaveDirectory.objectName())
 
         return ui_map
