@@ -38,29 +38,31 @@ class FasterWhisper(BaseASR):
         process (subprocess.Popen): 子进程对象。
     """
 
-    def __init__(self,
-                 audio_path: str,
-                 faster_whisper_path: str,
-                 whisper_model: str,
-                 model_dir: str,
-                 language: str = "zh",
-                 device: str = "auto",
-                 use_cache: bool = False,
-                 output_dir: str = None,
-                 output_format: str = "srt",
-                 need_word_time_stamp: bool = False,
-                 vad_filter: bool = True,
-                 vad_threshold: float = 0.4,
-                 vad_method: str = "silero_v4",
-                 ff_mdx_kim2: bool = False,
-                 one_word: int = 0,
-                 sentence: bool = False,
-                 prompt: str = "",
-                 max_line_width: int = 100,
-                 max_line_count: int = 1,
-                 max_comma: int = 20,
-                 max_comma_cent: int = 50,
-                 log_to_ui_func=None):
+    def __init__(
+        self,
+        audio_path: str,
+        faster_whisper_path: str,
+        whisper_model: str,
+        model_dir: str,
+        language: str = "zh",
+        device: str = "auto",
+        use_cache: bool = False,
+        output_dir: str = None,
+        output_format: str = "srt",
+        need_word_time_stamp: bool = False,
+        vad_filter: bool = True,
+        vad_threshold: float = 0.4,
+        vad_method: str = "silero_v4",
+        ff_mdx_kim2: bool = False,
+        one_word: int = 0,
+        sentence: bool = False,
+        prompt: str = "",
+        max_line_width: int = 100,
+        max_line_count: int = 1,
+        max_comma: int = 20,
+        max_comma_cent: int = 50,
+        log_to_ui_func=None,
+    ):
         """初始化实例。
 
         Args:
@@ -120,6 +122,7 @@ class FasterWhisper(BaseASR):
 
         # 注册退出处理
         import atexit
+
         atexit.register(self.stop)
 
     def _build_command(self, audio_path: Path) -> List[str]:
@@ -131,21 +134,20 @@ class FasterWhisper(BaseASR):
         Returns:
             List[str]: 命令行参数列表。
         """
-        cmd = [
-            str(self.faster_whisper_path),
-            "-m", str(self.model_path),
-            "--print_progress"
-        ]
+        cmd = [str(self.faster_whisper_path), "-m", str(self.model_path), "--print_progress"]
 
         # 添加模型目录参数
         if self.model_dir:
             cmd.extend(["--model_dir", str(self.model_dir)])
 
         # 基本参数
-        cmd.extend([
-            str(audio_path),
-            "--output_format", self.output_format,
-        ])
+        cmd.extend(
+            [
+                str(audio_path),
+                "--output_format",
+                self.output_format,
+            ]
+        )
 
         if self.device != FasterWhisperDeviceEnum.AUTO.value:
             cmd.extend(["-d", self.device])
@@ -161,10 +163,14 @@ class FasterWhisper(BaseASR):
 
         # VAD 相关参数
         if self.vad_filter:
-            cmd.extend([
-                "--vad_filter", "true",
-                "--vad_threshold", f"{self.vad_threshold:.2f}",
-            ])
+            cmd.extend(
+                [
+                    "--vad_filter",
+                    "true",
+                    "--vad_threshold",
+                    f"{self.vad_threshold:.2f}",
+                ]
+            )
             if self.vad_method:
                 cmd.extend(["--vad_method", self.vad_method])
 
@@ -181,13 +187,22 @@ class FasterWhisper(BaseASR):
             cmd.extend(["--one_word", str(self.one_word)])
 
         if self.sentence:
-            cmd.extend([
-                "--sentence",
-                "--max_line_width", str(self.max_line_width),
-                "--max_line_count", str(self.max_line_count),
-                "--max_comma", str(self.max_comma),
-                "--max_comma_cent", str(self.max_comma_cent)
-            ])
+            cmd.extend(
+                [
+                    "--sentence",
+                    "--max_line_width",
+                    str(self.max_line_width),
+                    "--max_line_count",
+                    str(self.max_line_count),
+                    "--max_comma",
+                    str(self.max_comma),
+                    "--max_comma_cent",
+                    str(self.max_comma_cent),
+                ]
+            )
+
+        if self.prompt:
+            cmd.extend(["--initial_prompt", f'"{self.prompt}"'])
 
         return cmd
 
@@ -205,10 +220,7 @@ class FasterWhisper(BaseASR):
         filtered_segments = []
         for seg in asr_data.segments:
             text = seg.text.strip()
-            if not (text.startswith('【') or
-                    text.startswith('[') or
-                    text.startswith('(') or
-                    text.startswith('（')):
+            if not (text.startswith("【") or text.startswith("[") or text.startswith("(") or text.startswith("（")):
                 filtered_segments.append(seg)
         return filtered_segments
 
@@ -244,9 +256,9 @@ class FasterWhisper(BaseASR):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
-                encoding='utf-8',
-                errors='ignore',
-                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                encoding="utf-8",
+                errors="ignore",
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
             )
 
             is_finish = False
@@ -261,7 +273,7 @@ class FasterWhisper(BaseASR):
                     if "error" in output:
                         error_msg += output
                         self.log_error(output)
-                    elif match := re.search(r'(\d+)%', output):
+                    elif match := re.search(r"(\d+)%", output):
                         progress = int(match.group(1))
                         if progress >= 95:
                             is_finish = True
@@ -288,7 +300,7 @@ class FasterWhisper(BaseASR):
 
             self.log_info("Faster Whisper 识别完成")
 
-            return output_path.read_text(encoding='utf-8')
+            return output_path.read_text(encoding="utf-8")
 
     def _get_key(self):
         """获取缓存键值。
@@ -296,17 +308,18 @@ class FasterWhisper(BaseASR):
         Returns:
             str: 缓存键值。
         """
-        return (f"{self.__class__.__name__}-{self.crc32_hex}-"
-                f"{self.need_word_time_stamp}-{self.model_path}-{self.language}")
+        return f"{self.__class__.__name__}-{self.crc32_hex}-" f"{self.need_word_time_stamp}-{self.model_path}-{self.language}"
 
     def stop(self):
         """停止 ASR 语音识别处理。"""
         if self.process:
             self.log_info("终止 Faster Whisper ASR 进程")
-            if os.name == 'nt':  # Windows系统
-                subprocess.run(['taskkill', '/F', '/T', '/PID', str(self.process.pid)],
-                               capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+            if os.name == "nt":  # Windows系统
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(self.process.pid)], capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW
+                )
             else:  # Linux/Mac系统
                 import signal
+
                 os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
             self.process = None

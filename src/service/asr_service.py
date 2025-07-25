@@ -27,21 +27,15 @@ class AsrService(BaseObject):
             log_to_ui_func: 用于将日志输出到 UI 的函数。
         """
         super().__init__(log_to_ui_func=log_to_ui_func)
-        self._args = self._init_default_args(log_to_ui_func)
 
-    @staticmethod
-    def _init_default_args(log_to_ui_func: Optional[callable]) -> Dict[str, Any]:
-        """
-        初始化默认的 ASR 参数。
-
-        Args:
-            log_to_ui_func: 用于将日志输出到 UI 的函数。
-
-        Returns:
-            包含默认参数的字典。
-        """
-        return {
+        self._asr_config = {
             "need_asr": True,
+            "need_prompt": True,
+            "audio_type": "video",  # 音频来源
+            "audio_subject": "normal",  # 音频内容主题
+        }
+
+        self._ars_params = {
             "use_cache": False,
             "need_word_time_stamp": True,
             "faster_whisper_path": "D:/tools/ai/Faster-Whisper-XXL/faster-whisper-xxl.exe",
@@ -67,10 +61,15 @@ class AsrService(BaseObject):
             the_args: 包含新参数的字典。
         """
         # 更新参数，仅更新存在的键
-        DictUtils.update_by_key(self._args, the_args)
+        DictUtils.update_by_key(self._asr_config, the_args)
+        DictUtils.update_by_key(self._ars_params, the_args)
 
         if "language" in the_args:
-            self._args["language"] = None if the_args["language"] == "auto" else the_args["language"]
+            self._ars_params["language"] = None if the_args["language"] == "auto" else the_args["language"]
+
+        if "need_prompt" in the_args:
+            prompt: str = (self._asr_config["audio_subject"] + " " + self._asr_config["audio_type"]) if self._asr_config["need_prompt"] else ""
+            self._ars_params["prompt"] = prompt
 
     def asr_process(self, out_file_path: Optional[str], audio_file_path: str) -> Optional[ASRData]:
         """
@@ -84,20 +83,18 @@ class AsrService(BaseObject):
             ASRData 对象，包含识别结果。如果发生错误则返回 None。
         """
 
-        if not self._args["need_asr"]:
+        if not self._asr_config["need_asr"]:
             self.log_warning("无需字幕识别，系统配置为‘不需要字幕识别’")
             return None
 
-        if not self.check_fasterwhisper_available(self._args):
+        if not self.check_fasterwhisper_available(self._ars_params):
             raise Exception("Faster Whisper没有安装。")
 
-        if not self.check_fasterwhisper_model_available(self._args):
+        if not self.check_fasterwhisper_model_available(self._ars_params):
             self.log_warning("Faster Whisper模型没有安装")
 
         self.log_info("开始 ASR 识别")
-        asr_config_args = dict(self._args)
-        asr_config_args.pop("need_asr")
-        asr_svr = FasterWhisper(audio_file_path, **asr_config_args)
+        asr_svr = FasterWhisper(audio_file_path, **self._ars_params)
         try:
             ret_data = asr_svr.run()
             if out_file_path:

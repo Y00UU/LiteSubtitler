@@ -70,7 +70,7 @@
          <item>
           <widget class="QLabel" name="lblWhisperExe">
            <property name="text">
-            <string>FasterWhisper工具</string>
+            <string>FasterWhisper</string>
            </property>
           </widget>
          </item>
@@ -171,7 +171,14 @@
          <item>
           <widget class="QCheckBox" name="ckbHumanVoice">
            <property name="text">
-            <string>消除背景音乐</string>
+            <string>消除BGM</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ckbPrompt">
+           <property name="text">
+            <string>提示词</string>
            </property>
           </widget>
          </item>
@@ -261,7 +268,7 @@
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,1,0,1,0,2,0,0,0,0,0,0,0">
+        <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,0,1,0,1,0,2,0,0,0,0,0,0">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -278,6 +285,13 @@
           <widget class="QCheckBox" name="ckbTranslate">
            <property name="text">
             <string>是否翻译</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ckbClearPunctuation">
+           <property name="text">
+            <string>消除标点符号</string>
            </property>
           </widget>
          </item>
@@ -340,13 +354,6 @@
          </item>
          <item>
           <widget class="QComboBox" name="cbbStyleLanguage"/>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="ckbClearPunctuation">
-           <property name="text">
-            <string>消除标点符号</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -467,7 +474,7 @@
          <item>
           <widget class="QCheckBox" name="ckbEmbedSubtitle">
            <property name="text">
-            <string>把字幕合成到视频中</string>
+            <string>字幕嵌入视频</string>
            </property>
           </widget>
          </item>
@@ -481,14 +488,14 @@
          <item>
           <widget class="QCheckBox" name="ckbRemoveTempFile">
            <property name="text">
-            <string>删除处理中产生的文件</string>
+            <string>自动删除临时文件</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="lblSubtitleLayout">
            <property name="text">
-            <string>字幕排布（原文和译文的布局）</string>
+            <string>字幕布局</string>
            </property>
           </widget>
          </item>
@@ -498,7 +505,7 @@
          <item>
           <widget class="QLabel" name="lblSubtitleVH">
            <property name="text">
-            <string>字幕与视频底部间隔</string>
+            <string>字幕视频底部间距</string>
            </property>
           </widget>
          </item>

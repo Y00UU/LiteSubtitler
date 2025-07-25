@@ -70,6 +70,7 @@ class SettingFacade(BaseConfigFacade):
         ui_map.add(("asr_args", "vad_filter"), ui.ckbVad.objectName())
         ui_map.add(("asr_args", "vad_method"), ui.cbbVadMethod.objectName())
         ui_map.add(("asr_args", "vad_threshold"), ui.spbVadValue.objectName())
+        ui_map.add(("asr_args", "need_prompt"), ui.ckbPrompt.objectName())
 
         # 翻译相关参数映射
         ui_map.add(("translate_args", "need_translate"), ui.ckbTranslate.objectName())
@@ -195,16 +196,14 @@ class SettingFacade(BaseConfigFacade):
                 AudioTypeEnum,
                 ["translate_args", "audio_type"],
                 AudioTypeEnum.MOVIE.value,
-                None,
-                lambda val: val if val in [member.value for member in AudioTypeEnum] else None,
+                lambda val: self._config_set_audio_type(val),
             ),
             (
                 self.ui.cbbSubjectContent,
                 SubjectContentEnum,
                 ["translate_args", "subject_content"],
                 SubjectContentEnum.ENTERTAINMENT.value,
-                None,
-                lambda val: val if val in [member.value for member in SubjectContentEnum] else None,
+                lambda val: self._config_set_audio_subject(val),
             ),
             (
                 self.ui.cbbStyleLanguage,
@@ -356,6 +355,16 @@ class SettingFacade(BaseConfigFacade):
         if isinstance(item, AudioLanguageEnum):
             self.config_args["asr_args"]["language"] = item.code
             self.config_args["translate_args"]["source_language"] = item.value
+
+    def _config_set_audio_type(self, item: AudioTypeEnum) -> None:
+        if isinstance(item, AudioTypeEnum):
+            self.config_args["asr_args"]["audio_type"] = item.code
+            self.config_args["translate_args"]["audio_type"] = item.value
+
+    def _config_set_audio_subject(self, item: SubjectContentEnum) -> None:
+        if isinstance(item, SubjectContentEnum):
+            self.config_args["asr_args"]["audio_subject"] = item.code
+            self.config_args["translate_args"]["subject_content"] = item.value
 
     def _on_select_default_directory(
         self,

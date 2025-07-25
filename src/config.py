@@ -6,7 +6,7 @@ import os
 import sys
 from typing import Dict, Any, List, Optional
 
-VERSION = "v0.1.0"
+VERSION = "v0.1.1"
 APP_TITLE = "AI千言字幕"
 APP_NAME = "AILiteSubtitler"
 APP_LICENSE = "GPLv3"
@@ -86,6 +86,7 @@ DEFAULT_ARGS = {
     },
     "asr_args": {
         "need_asr": True,
+        "need_prompt": True,
         "use_cache": False,
         "faster_whisper_path": os.path.join(ROOT_PATH, "Faster-Whisper-XXL", "faster-whisper-xxl.exe"),
         "whisper_model": "large-v2",  # "large-v2",
@@ -96,6 +97,8 @@ DEFAULT_ARGS = {
         "vad_method": "silero_v3",
         "ff_mdx_kim2": False,  # 分离出人声
         "language": "auto",  # 源语言
+        "audio_type": "video",  # 音频来源
+        "audio_subject": "normal",  # 音频内容主题
     },
     "translate_args": {
         "need_translate": True,  # 是否翻译
