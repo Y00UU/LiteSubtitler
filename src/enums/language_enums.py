@@ -110,7 +110,8 @@ class SubtitleLanguageEnum(Enum):
 class AudioLanguageEnum(ThreeFieldEnum):
     AUTO = ("自动", "auto", "unknown")
     ENGLISH = ("英语", "en", "English")
-    CHINESE = ("中文", "zh", "Chinese")
+    CHINESE_SIMPLIFIED = ("简中", "zh-cn", "Chinese-Simplified")
+    CHINESE_TRADITIONAL = ("繁中", "zh-tw", "Chinese-Tradational")
     JAPANESE = ("日本语", "ja", "Japanese")
     KOREAN = ("韩语", "ko", "Korean")
     YUE = ("粤语", "yue", "Yue")
@@ -146,7 +147,7 @@ class AudioLanguageEnum(ThreeFieldEnum):
 
     @staticmethod
     def is_cjk_only(value: str) -> bool:
-        return value == (AudioLanguageEnum.CHINESE._value_ or AudioLanguageEnum.JAPANESE._value_ or AudioLanguageEnum.KOREAN._value_)
+        return value == (AudioLanguageEnum.CHINESE_SIMPLIFIED._value_ or AudioLanguageEnum.CHINESE_TRADITIONAL._value_ or AudioLanguageEnum.JAPANESE._value_ or AudioLanguageEnum.KOREAN._value_)
 
 
 class AudioTypeEnum(TwoFieldEnum):
@@ -160,6 +161,7 @@ class AudioTypeEnum(TwoFieldEnum):
     SONG = ("歌曲", "song")
     OPERA = ("歌剧", "opera")
     COMEDY = ("小品", "comedy")
+    GAMES = ("游戏", "games")
 
     # 为了使枚举的成员名（如 ITEM_ONE）直接返回名称字段，而不是元组
     def __str__(self):

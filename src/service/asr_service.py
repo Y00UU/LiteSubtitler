@@ -2,6 +2,7 @@
 import copy
 import os
 from typing import Optional, Dict, Any
+from zhconv import convert
 
 from core.asr.asr_data import ASRData
 from core.asr.faster_whisper import FasterWhisper
@@ -33,6 +34,7 @@ class AsrService(BaseObject):
             "need_prompt": True,
             "audio_type": "video",  # 音频来源
             "audio_subject": "normal",  # 音频内容主题
+            "language": "en",
         }
 
         self._ars_params = {
@@ -66,6 +68,9 @@ class AsrService(BaseObject):
 
         if "language" in the_args:
             self._ars_params["language"] = None if the_args["language"] == "auto" else the_args["language"]
+            # 特殊处理。简体中文和繁体中文在fasterwhisper识别时统一使用'zh'中文参数
+            if self._ars_params["language"] is not None and (self._ars_params["language"] == "zh-cn" or self._ars_params["language"] == "zh-tw"):
+                self._ars_params["language"] = "zh"
 
         if "need_prompt" in the_args:
             prompt: str = (self._asr_config["audio_subject"] + " " + self._asr_config["audio_type"]) if self._asr_config["need_prompt"] else ""
@@ -128,8 +133,27 @@ class AsrService(BaseObject):
 
         if out_file_path:
             asr_data.to_srt(layout="仅原文", save_path=out_file_path)
+            # 特殊处理，中文简繁转换
+            self.convert_chinese_words(out_file_path, self._asr_config["language"])
 
         return asr_data
+
+    def convert_chinese_words(self, file_path: str, ChineseLangCode: str):
+        """
+        将指定文本文件中的中文内容转换为简体或繁体中文，并覆盖原文件。
+
+        :param file_path: 文本文件路径（支持 .txt 等纯文本文件）
+        :param ChineseLangCode: 目标语言代码，支持 'zh-cn'（简体）和 'zh-tw'（繁体）
+        """
+        if ChineseLangCode is not None and (ChineseLangCode == "zh-cn" or ChineseLangCode == "zh-tw") and os.path.isfile(file_path):
+            converted_text = ""
+            with open(file_path, "r", encoding="utf-8") as f:
+                text: str = f.read()
+                converted_text = convert(text, ChineseLangCode)
+            if len(converted_text) > 0:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(converted_text)
+                    self.log_info(f"中文字幕[{ChineseLangCode}]转换完成！")
 
     @staticmethod
     def check_fasterwhisper_available(asr_config_args) -> bool:
