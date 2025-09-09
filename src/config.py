@@ -6,7 +6,7 @@ import os
 import sys
 from typing import Dict, Any, List, Optional
 
-VERSION = "v0.1.2_20250830"
+VERSION = "v0.1.3_20250910"
 APP_TITLE = "AI千言字幕"
 APP_NAME = "AILiteSubtitler"
 APP_LICENSE = "GPLv3"

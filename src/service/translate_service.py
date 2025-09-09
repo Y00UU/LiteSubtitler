@@ -61,7 +61,7 @@ class TranslateService(BaseObject):
         """
         DictUtils.update_by_key(self._args, the_args)
 
-    def translate_srt(self, out_file_path: str | None, asr_data: ASRData, batch_num: int = 30) -> ASRData:
+    def translate_srt(self, out_file_path: str | None, asr_data: ASRData, batch_num: int = 40) -> ASRData:
         """
         翻译字幕文件并保存结果。
 

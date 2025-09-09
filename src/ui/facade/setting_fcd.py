@@ -3,6 +3,7 @@ import os
 import threading
 from typing import List
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QIcon
 from PyQt6.QtWidgets import QFileDialog, QFrame, QWidget, QDialog
 from PyQt6.QtCore import pyqtSignal
@@ -218,6 +219,9 @@ class SettingFacade(BaseConfigFacade):
         ]
         for config in combobox_configs:
             self._init_combobox_(*config)
+
+        for index, member in enumerate(VadMethodEnum, 0):
+            self.ui.cbbVadMethod.setItemData(index, VadMethodEnum.read_desc(member.value), Qt.ItemDataRole.ToolTipRole)
 
         self.ui.cbbLlmModel.currentIndexChanged.connect(lambda: self._on_cbbLlmModel_changed(["translate_args", "llm_model"]))
 

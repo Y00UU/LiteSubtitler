@@ -101,6 +101,7 @@ class MainController(BaseObject):
         self.api_service.request_stop_connect(slots_dict["stop"])
         self.api_service.request_clear_connect(slots_dict["clear"])
         self.api_service.request_selectLang_connect(slots_dict["selectLang"])
+        self.api_service.request_selectASRModel_connect(slots_dict["selectASRModel"])
         self.api_service.request_exit_connect(slots_dict["exit"])
 
     def api_server_start(self, args):

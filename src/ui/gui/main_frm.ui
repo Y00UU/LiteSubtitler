@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1238</width>
     <height>956</height>
    </rect>
   </property>
@@ -31,7 +31,13 @@
     <item>
      <widget class="QFrame" name="freSetting">
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::Panel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
       </property>
       <layout class="QVBoxLayout" name="vlytSetting" stretch="0,0,0">
        <property name="spacing">
@@ -54,7 +60,7 @@
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
-         <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,0,1,0,0,1,0,2">
+         <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0">
           <property name="leftMargin">
            <number>10</number>
           </property>
@@ -75,26 +81,25 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="ckbTranslate">
+           <widget class="QLabel" name="lblWhisperModel">
             <property name="text">
-             <string>是否翻译</string>
+             <string>Whisper模型</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="lblTranslateMode">
-            <property name="text">
-             <string>翻译模式</string>
+           <widget class="QComboBox" name="cbbWhisperModel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cbbTranslateMode"/>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="ckbClearPunctuation">
-            <property name="text">
-             <string>消除标点符号</string>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -106,7 +111,47 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="cbbSourceLanguage"/>
+           <widget class="QComboBox" name="cbbSourceLanguage">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="font">
+             <font>
+              <family>宋体</family>
+              <pointsize>9</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ckbTranslate">
+            <property name="text">
+             <string>是否翻译</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="lblTargetLanguage">
@@ -116,47 +161,90 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="cbbTargetLanguage"/>
+           <widget class="QComboBox" name="cbbTargetLanguage">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
+            </property>
+           </widget>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="freSubtitle">
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <layout class="QHBoxLayout" name="hlytSubtitle" stretch="0,0,1,0,0,0,0,0,0">
-          <property name="leftMargin">
-           <number>10</number>
-          </property>
-          <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>10</number>
-          </property>
-          <property name="bottomMargin">
-           <number>4</number>
-          </property>
+          <item>
+           <widget class="QLabel" name="lblTranslateMode">
+            <property name="text">
+             <string>翻译模式</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbbTranslateMode">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ckbClearPunctuation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>消除标点符号</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="font">
+             <font>
+              <family>宋体</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCheckBox" name="ckbEmbedSubtitle">
             <property name="text">
-             <string>把字幕合成到视频中</string>
+             <string>字幕嵌入视频</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="lblSubtitleLayout">
             <property name="text">
-             <string>字幕排布（原文和译文的布局）</string>
+             <string>字幕排布</string>
             </property>
            </widget>
           </item>
@@ -176,6 +264,34 @@
             </property>
            </widget>
           </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="freSubtitle">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QHBoxLayout" name="hlytSubtitle" stretch="0,0,0,0,0,0">
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
           <item>
            <widget class="QLabel" name="lblDefaultOpenDirectory">
             <property name="text">
@@ -245,7 +361,10 @@
     <item>
      <widget class="QFrame" name="freTools">
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::Panel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
       </property>
       <property name="midLineWidth">
        <number>1</number>
@@ -261,72 +380,26 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QToolButton" name="btnAddFile">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QPushButton" name="btnAddFile">
          <property name="minimumSize">
           <size>
            <width>0</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="font">
           <font>
            <family>宋体</family>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="toolTipDuration">
-          <number>-1</number>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
          <property name="text">
-          <string> 添加文件</string>
+          <string>添加文件</string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>../../../resources/images/icons/plus.png</normaloff>../../../resources/images/icons/plus.png</iconset>
-         </property>
-         <property name="autoRepeatInterval">
-          <number>100</number>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::DelayedPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>false</bool>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::NoArrow</enum>
          </property>
         </widget>
        </item>
@@ -346,7 +419,8 @@
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
+           <family>宋体</family>
+           <pointsize>10</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -360,13 +434,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btnStart">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QPushButton" name="btnStart">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -377,51 +445,20 @@
           <font>
            <family>宋体</family>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="toolTipDuration">
-          <number>-1</number>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: rgb(255, 170, 0)</string>
-         </property>
          <property name="text">
-          <string> 开始</string>
+          <string> 开 始 </string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>../../../resources/images/icons/启动.png</normaloff>../../../resources/images/icons/启动.png</iconset>
          </property>
-         <property name="autoRepeatInterval">
-          <number>100</number>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::DelayedPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>false</bool>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::NoArrow</enum>
-         </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btnStop">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QPushButton" name="btnStop">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -432,45 +469,44 @@
           <font>
            <family>宋体</family>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="toolTipDuration">
-          <number>-1</number>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: red</string>
-         </property>
          <property name="text">
-          <string> 停止</string>
+          <string>停 止</string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>../../../resources/images/icons/暂停.png</normaloff>../../../resources/images/icons/暂停.png</iconset>
          </property>
-         <property name="autoRepeatInterval">
-          <number>100</number>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnClearFile">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
          </property>
-         <property name="popupMode">
-          <enum>QToolButton::DelayedPopup</enum>
+         <property name="font">
+          <font>
+           <family>宋体</family>
+           <pointsize>10</pointsize>
+           <bold>true</bold>
+          </font>
          </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         <property name="text">
+          <string>清空列表</string>
          </property>
-         <property name="autoRaise">
-          <bool>false</bool>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::NoArrow</enum>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../resources/images/icons/清空.png</normaloff>../../../resources/images/icons/清空.png</iconset>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btnClearFile">
+        <widget class="QPushButton" name="btnClearLog">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -487,67 +523,42 @@
           <font>
            <family>宋体</family>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="toolTipDuration">
-          <number>-1</number>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
          <property name="text">
-          <string> 清空文件</string>
+          <string>清空日志</string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>../../../resources/images/icons/清空.png</normaloff>../../../resources/images/icons/清空.png</iconset>
          </property>
-         <property name="autoRepeatInterval">
-          <number>100</number>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::DelayedPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>false</bool>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::NoArrow</enum>
-         </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QRadioButton" name="rbAPIServer">
          <property name="font">
           <font>
-           <weight>75</weight>
+           <family>宋体</family>
+           <pointsize>10</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="layoutDirection">
-          <enum>Qt::RightToLeft</enum>
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
           <string>API服务</string>
@@ -579,7 +590,7 @@
        <string notr="true"/>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Panel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
      </widget>
     </item>
@@ -592,12 +603,15 @@
        <string notr="true"/>
       </property>
       <property name="frameShape">
-       <enum>QFrame::WinPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="html">
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'宋体'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -610,8 +624,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
-     <height>22</height>
+     <width>1238</width>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

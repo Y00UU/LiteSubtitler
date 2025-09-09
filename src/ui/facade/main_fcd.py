@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QSystemTrayIcon, QMenu, QMessa
 
 from config import ConfigTool, GITHUB_REPO_URL
 from controller.subtitles_controller import MainController
+from enums.faster_whisper_enums import FasterWhisperModelEnum
 from enums.language_enums import AudioLanguageEnum, SubtitleLanguageEnum
 from enums.supported_subtitle_enum import SubtitleLayoutEnum
 from enums.translate_mode_enum import TranslateModeEnum
@@ -113,6 +114,7 @@ class MainFacade(BaseConfigFacade):
                     "stop": self._on_stop_run,
                     "clear": self._on_clear_all_file,
                     "selectLang": self._on_select_lang,
+                    "selectASRModel": self._on_select_whisper_model,
                     "exit": self._on_quit_application_,
                 }
             )
@@ -189,6 +191,7 @@ class MainFacade(BaseConfigFacade):
             (self.ui.btnAddFile, self._on_add_file_),
             (self.ui.btnScanAddFiles, self._on_scan_add_files_),
             (self.ui.btnClearFile, self._on_clear_all_file),
+            (self.ui.btnClearLog, self._on_clear_log),
             (self.ui.btnStart, self._on_start_run),
             (self.ui.btnStop, self._on_stop_run),
             (self.ui.btnDefaultOpenDirectory, self._on_select_default_dir),
@@ -231,6 +234,7 @@ class MainFacade(BaseConfigFacade):
                 None,
                 lambda val: val if val in enable_languages else None,
             ),
+            (self.ui.cbbWhisperModel, FasterWhisperModelEnum, ["asr_args", "whisper_model"], FasterWhisperModelEnum.LARGE_V2.value),
             (
                 self.ui.cbbTranslateMode,
                 TranslateModeEnum,
@@ -391,6 +395,10 @@ class MainFacade(BaseConfigFacade):
             self.model.clear()
             self.log_info("【清空任务列表】")
 
+    def _on_clear_log(self):
+        """清空所有日志"""
+        self.ui.txtLog.clear()
+
     def _add_files_(self, file_names: list[str]) -> None:
         if file_names:
             add_cnt = 0
@@ -446,7 +454,7 @@ class MainFacade(BaseConfigFacade):
             ArrayTableModel: 构建好的表格视图模型。
         """
         data = [["0", "*", "0", "", ""]]
-        headers = ["任务id", "文件名称", "处理进度", "处理步骤", "文件路径"]
+        headers = ["任务id", "文件名称", "处理进度", "处理状态", "文件路径"]
         sizes = [250, 200, 60, 200]
         return GuiTool.build_tv_model(tv=self.ui.tbvTask, data=data, headers=headers, sizes=sizes)
 
@@ -458,12 +466,17 @@ class MainFacade(BaseConfigFacade):
             self.controller.api_server_stop()
 
     def _on_select_lang(self, source: str, target: str):
-        if AudioLanguageEnum.read_code(source) is not None:
+        if AudioLanguageEnum.read_code(source) is not None and len(source) > 0:
             self.ui.cbbSourceLanguage.setCurrentText(source)
             self.log_info(f"选择源语言：{source}")
-        if SubtitleLanguageEnum.read_name(target) is not None:
+        if SubtitleLanguageEnum.read_name(target) is not None and len(target) > 0:
             self.ui.cbbTargetLanguage.setCurrentText(target)
             self.log_info(f"选择目标语言：{target}")
+
+    def _on_select_whisper_model(self, modelName: str):
+        if FasterWhisperModelEnum.read_name(modelName) is not None and len(modelName) > 0:
+            self.ui.cbbWhisperModel.setCurrentText(modelName)
+            self.log_info(f"选择whisper模型：{modelName}")
 
     def _on_quit_application_(self):
         sys.exit()

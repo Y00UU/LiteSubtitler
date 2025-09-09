@@ -97,6 +97,7 @@ class MainFrmHelper:
 
         # ASR字幕识别提取参数相关
         ui_map.add(("asr_args", "need_asr"), ui.ckbASR.objectName())
+        ui_map.add(("asr_args", "whisper_model"), ui.cbbWhisperModel.objectName())
 
         # 翻译相关参数映射
         ui_map.add(("translate_args", "need_translate"), ui.ckbTranslate.objectName())

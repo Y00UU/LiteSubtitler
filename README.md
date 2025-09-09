@@ -10,12 +10,18 @@
  
 - **🚀 使用FasterWhiper** 相较于OpenAI Whisper占用资源少
 - **💻 自定义较高** pyqt6 GUI二次开发比较方便快速
-- **🌐 源项目地址** https://github.com/Tobin-wu/LiteSubtitler
+- **🌐 源项目** 基于源项目 https://github.com/Tobin-wu/LiteSubtitler 进行了维护和二次开发
  
-## v0.1.2 - 20250830
+## v0.1.3 - 20250910
 -  新增
-   -  指定识别简体中文和繁体中文
-   -  音频来源游戏选项
+   - 语音识别模型medium-en、large-v3-ja、large-v3-zh
+   - API设置语音识别模型接口
+   - 选择语音识别过滤算法时文本提示
+   - 清空日志
+- 优化
+  - 增加AI字幕翻译每次翻译条数
+  - 更新Faster-Whisper工具包：Faster-Whisper-XXL_r245.4_windows
+  - 主界面和设置页面UI
 
 ## 📖1、快速开始
 
@@ -279,6 +285,8 @@ FasterWhisper用于做语音转文字处理。
 - large-v1: Systran/faster-whisper-large-v1    https://hf-mirror.com/Systran/faster-whisper-large-v1/tree/main
 - large-v2: Systran/faster-whisper-large-v2    https://hf-mirror.com/Systran/faster-whisper-large-v2/tree/main 
 - large-v3: Systran/faster-whisper-large-v3    https://hf-mirror.com/Systran/faster-whisper-large-v3/tree/main
+- large-v3-zh: whereAlone/faster-whisper-large-v3-zh  https://huggingface.co/whereAlone/faster-whisper-large-v3-zh/tree/main
+- large-v3-ja JhonVanced/faster-whisper-large-v3-ja   https://huggingface.co/JhonVanced/faster-whisper-large-v3-ja/tree/main
 
 #### 下载huggingface上的模型
 - 国内镜像：https://hf-mirror.com/
@@ -475,3 +483,8 @@ pyinstaller --onefile -w src/main.py
    -  FasterWhisper 语音识别提提示词
 -  重构
    -  一些配置参数传递代码
+
+## v0.1.2 - 20250830
+-  新增
+   -  指定识别简体中文和繁体中文
+   -  音频来源游戏选项

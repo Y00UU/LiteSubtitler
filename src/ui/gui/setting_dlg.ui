@@ -20,9 +20,12 @@
    <item>
     <widget class="QFrame" name="freSetting">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Panel</enum>
      </property>
-     <layout class="QVBoxLayout" name="vlytSetting" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="vlytSetting" stretch="0,0,0,0,0,0,0,0,0,0,0,0">
       <property name="spacing">
        <number>2</number>
       </property>
@@ -43,7 +46,7 @@
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QHBoxLayout" name="hlytVad" stretch="0,0,6,0,0,0,2,0,1">
+        <layout class="QHBoxLayout" name="hlytVad" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -57,40 +60,104 @@
           <number>6</number>
          </property>
          <item>
-          <widget class="QPushButton" name="btnDownTool">
+          <widget class="QCheckBox" name="ckbASR">
            <property name="text">
-            <string>下载工具</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../../../../../../../resources/images/icons/下载.png</normaloff>../../../../../../../resources/images/icons/下载.png</iconset>
+            <string>字幕识别</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="lblWhisperExe">
+          <widget class="QLabel" name="lblSourceLanguage">
            <property name="text">
-            <string>FasterWhisper</string>
+            <string>音频语言</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="edtWhisperExe"/>
+          <widget class="QComboBox" name="cbbSourceLanguage">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnWhisperExe">
+          <widget class="QLabel" name="lblWhisperModel">
+           <property name="text">
+            <string>Whisper模型</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbWhisperModel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="sizeIncrement">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnDownModel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
            <property name="text">
-            <string>选择</string>
+            <string>下载模型</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../../../../../../../resources/images/icons/可执行文件.png</normaloff>../../../../../../../resources/images/icons/可执行文件.png</iconset>
+             <normaloff>../../../../../../../resources/images/icons/下载模型.png</normaloff>../../../../../../../resources/images/icons/下载模型.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ckbPrompt">
+           <property name="text">
+            <string>提示词</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ckbHumanVoice">
+           <property name="text">
+            <string>消除BGM</string>
            </property>
           </widget>
          </item>
@@ -109,7 +176,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbbVadMethod"/>
+          <widget class="QComboBox" name="cbbVadMethod">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLabel" name="lblVadValue">
@@ -137,13 +211,6 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_8">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QFrame" name="freWhisper">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
@@ -162,85 +229,81 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="ckbASR">
+          <widget class="QLabel" name="lblWhisperExe">
            <property name="text">
-            <string>字幕识别</string>
+            <string>FasterWhisper</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="ckbHumanVoice">
-           <property name="text">
-            <string>消除BGM</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="ckbPrompt">
-           <property name="text">
-            <string>提示词</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblRunDevice">
-           <property name="text">
-            <string>运行设备</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbRunDevice"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblWhisperModel">
-           <property name="text">
-            <string>Whisper模型</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbWhisperModel">
+          <widget class="QLineEdit" name="edtWhisperExe">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximumSize">
+           <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="sizeIncrement">
-            <size>
-             <width>200</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnDownModel">
+          <widget class="QPushButton" name="btnWhisperExe">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
-            <string>下载模型</string>
+            <string>选择</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../../../../../../../resources/images/icons/下载模型.png</normaloff>../../../../../../../resources/images/icons/下载模型.png</iconset>
+             <normaloff>../../../../../../../resources/images/icons/可执行文件.png</normaloff>../../../../../../../resources/images/icons/可执行文件.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnDownTool">
+           <property name="text">
+            <string>下载工具</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../../../../../../../resources/images/icons/下载.png</normaloff>../../../../../../../resources/images/icons/下载.png</iconset>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="lblWhisterDir">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="text">
             <string>模型目录</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="edtWhisperDir"/>
+          <widget class="QLineEdit" name="edtWhisperDir">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>320</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="btnWhisperDir">
@@ -253,11 +316,21 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="lblRunDevice">
+           <property name="text">
+            <string>硬件加速</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbRunDevice"/>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_7">
+       <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -268,7 +341,7 @@
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,0,1,0,1,0,2,0,0,0,0,0,0">
+        <layout class="QHBoxLayout" name="hlytTranslate" stretch="0,0,2,0,0,0,0,0,0,0,0,0">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -289,9 +362,94 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="ckbClearPunctuation">
+          <widget class="QLabel" name="lblTargetLanguage">
            <property name="text">
-            <string>消除标点符号</string>
+            <string>目标语言</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbTargetLanguage">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblAudioType">
+           <property name="text">
+            <string>音频来源</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbAudioType">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblSubjectContent">
+           <property name="text">
+            <string>主题内容</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbSubjectContent">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblStyleLanguage">
+           <property name="text">
+            <string>语言风格</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbStyleLanguage">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -303,66 +461,29 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbbTranslateMode"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblSourceLanguage">
-           <property name="text">
-            <string>源语言</string>
+          <widget class="QComboBox" name="cbbTranslateMode">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbbSourceLanguage"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblTargetLanguage">
+          <widget class="QCheckBox" name="ckbClearPunctuation">
            <property name="text">
-            <string>目标语言</string>
+            <string>消除标点符号</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbTargetLanguage"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblAudioType">
-           <property name="text">
-            <string>音频来源</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbAudioType"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblSubjectContent">
-           <property name="text">
-            <string>主题内容</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbSubjectContent"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblStyleLanguage">
-           <property name="text">
-            <string>语言风格</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbStyleLanguage"/>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line_6">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
        </widget>
       </item>
       <item>
@@ -370,7 +491,7 @@
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QHBoxLayout" name="hlytLLM" stretch="0,0,3,0,2,0,0,2">
+        <layout class="QHBoxLayout" name="hlytLLM" stretch="0,3,0,2,0,0,2">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -384,16 +505,9 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="QLabel" name="lblLLM">
-           <property name="text">
-            <string>LLM 配置：</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="lblApiKey">
            <property name="text">
-            <string>API Key</string>
+            <string>LLM API Key</string>
            </property>
           </widget>
          </item>
@@ -403,7 +517,7 @@
          <item>
           <widget class="QLabel" name="lblBaseUrl">
            <property name="text">
-            <string>Base URL</string>
+            <string>API URL</string>
            </property>
           </widget>
          </item>
@@ -447,7 +561,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_5">
+       <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -516,18 +630,11 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QFrame" name="freMainSubtitle">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QHBoxLayout" name="hlytSubtitleMain" stretch="0,0,0,0,0,1,0,1,0,0,0,0,0,0">
+        <layout class="QHBoxLayout" name="hlytSubtitleMain" stretch="0,0,0,0,1,0,1,0,0,0,0,0,0">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -541,16 +648,9 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="Line" name="line_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="lblSubtitleMain">
            <property name="text">
-            <string>主字幕（上面的字幕）样式：</string>
+            <string>主字幕（首行字幕）样式</string>
            </property>
           </widget>
          </item>
@@ -615,10 +715,7 @@
             <string notr="true">background-color: #5aff65; border: 1px solid black;</string>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
           </widget>
          </item>
@@ -664,10 +761,7 @@
             <string notr="true">QWidget { background-color: rgb(5, 7, 13); border: 1px solid black; }</string>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
           </widget>
          </item>
@@ -698,13 +792,6 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QFrame" name="freSecondSubtitle">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
@@ -725,7 +812,7 @@
          <item>
           <widget class="QLabel" name="lblSubtitleSecond">
            <property name="text">
-            <string>副字幕（下面的字幕）样式：</string>
+            <string>副字幕（次行字幕）样式</string>
            </property>
           </widget>
          </item>
@@ -790,10 +877,7 @@
             <string notr="true">QWidget { background-color: rgb(255, 255, 255); border: 1px solid black; }</string>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
           </widget>
          </item>
@@ -842,10 +926,7 @@
             <string notr="true">QWidget { background-color: rgb(5, 7, 13); border: 1px solid black; }</string>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
           </widget>
          </item>
@@ -876,19 +957,9 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QFrame" name="freFileDirectory">
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -955,7 +1026,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_9">
+       <widget class="Line" name="line_8">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -964,10 +1035,7 @@
       <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -984,9 +1052,6 @@
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1015,7 +1080,7 @@
    <item>
     <widget class="QFrame" name="freTools">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="midLineWidth">
       <number>1</number>
@@ -1068,24 +1133,20 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="btnSetting">
+       <widget class="QPushButton" name="btnSetting">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -1094,56 +1155,51 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>70</width>
+          <width>100</width>
           <height>30</height>
-         </size>
-        </property>
-        <property name="baseSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <family>宋体</family>
           <pointsize>10</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
-        <property name="contextMenuPolicy">
-         <enum>Qt::DefaultContextMenu</enum>
-        </property>
         <property name="text">
-         <string>确定</string>
+         <string>确 认</string>
         </property>
         <property name="icon">
          <iconset>
           <normaloff>../../../resources/images/icons/确定.png</normaloff>../../../resources/images/icons/确定.png</iconset>
         </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="btnCancel">
+       <widget class="QPushButton" name="btnCancel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>70</width>
+          <width>100</width>
           <height>30</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>取消</string>
+         <string>取 消</string>
         </property>
         <property name="icon">
          <iconset>
           <normaloff>../../../resources/images/icons/取消.png</normaloff>../../../resources/images/icons/取消.png</iconset>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
         </property>
        </widget>
       </item>

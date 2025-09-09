@@ -86,6 +86,7 @@ class ApiServer(BaseObject):
     stop_signal = pyqtSignal()
     clear_signal = pyqtSignal()
     selectLang_signal = pyqtSignal(str, str)
+    selectASRModel_signal = pyqtSignal(str)
     exit_signal = pyqtSignal()
 
     def __init__(self, log_to_ui_func: Optional[Callable] = None) -> None:
@@ -137,6 +138,9 @@ class ApiServer(BaseObject):
     def request_selectLang_connect(self, callback_func):
         self.selectLang_signal.connect(callback_func)
 
+    def request_selectASRModel_connect(self, callback_func):
+        self.selectASRModel_signal.connect(callback_func)
+
     def request_exit_connect(self, callback_func):
         self.exit_signal.connect(callback_func)
 
@@ -165,7 +169,8 @@ class ApiServer(BaseObject):
         self.route(path="/start", endpoint=self._request_start, methods=["GET"])
         self.route(path="/stop", endpoint=self._request_stop, methods=["GET"])
         self.route(path="/clear", endpoint=self._request_clear, methods=["GET"])
-        self.route(path="/lang", endpoint=self._request_selectLang, methods=["GET"])
+        self.route(path="/lang", endpoint=self._request_select_lang, methods=["GET"])
+        self.route(path="/asr", endpoint=self._request_select_asr, methods=["GET"])
         self.route(path="/exit", endpoint=self._request_exit, methods=["GET"])
 
     def _route_ws(self) -> None:
@@ -199,9 +204,13 @@ class ApiServer(BaseObject):
         self.clear_signal.emit()
         return {"code": 1, "message": "success", "type": "clear"}
 
-    def _request_selectLang(self, source: str = "", target: str = ""):
+    def _request_select_lang(self, source: str = "", target: str = ""):
         self.selectLang_signal.emit(source, target)
         return {"code": 1, "message": "success", "type": "lang"}
+
+    def _request_select_asr(self, modelname: str = ""):
+        self.selectASRModel_signal.emit(modelname)
+        return {"code": 1, "message": "success", "type": "asr"}
 
     def _request_exit(self):
         self.exit_signal.emit()
